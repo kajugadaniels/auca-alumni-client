@@ -704,3 +704,17 @@ export async function fetchOpportunityHistories(params = {}) {
     throw err.response?.data || err;
   }
 }
+
+/**
+ * Fetch detailed information for a single opportunity history by ID.
+ * @param {number} historyId
+ * @returns {Promise<import('axios').AxiosResponse>}
+ */
+export async function fetchOpportunityHistoryDetail(historyId) {
+  try {
+    const { data } = await apiClient.get(`/opportunity-histories/${historyId}`);
+    return data;
+  } catch (err) {
+    throw err.response?.data || err;
+  }
+}
