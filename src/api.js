@@ -838,3 +838,51 @@ export async function addPersonalInformation(payload) {
     throw err.response?.data || err;
   }
 }
+
+/**
+ * Update an existing personal information record by ID.
+ * @param {number} infoId
+ * @param {{
+ *   photo?: File,
+ *   bio?: string,
+ *   current_employer?: string,
+ *   self_employed?: string,
+ *   latest_education_level?: string,
+ *   address?: string,
+ *   profession_id?: number,
+ *   dob?: string, // ISO date
+ *   start_date?: string, // ISO date
+ *   end_date?: string, // ISO date
+ *   faculty_id?: number,
+ *   country_id?: string,
+ *   department?: string,
+ *   gender?: boolean,
+ *   status?: string
+ * }} payload
+ * @returns {Promise<import('axios').AxiosResponse>}
+ */
+export async function updatePersonalInformation(infoId, payload) {
+  try {
+    const formData = new FormData();
+    if (payload.photo) formData.append('photo', payload.photo);
+    if (payload.bio) formData.append('bio', payload.bio);
+    if (payload.current_employer) formData.append('current_employer', payload.current_employer);
+    if (payload.self_employed) formData.append('self_employed', payload.self_employed);
+    if (payload.latest_education_level) formData.append('latest_education_level', payload.latest_education_level);
+    if (payload.address) formData.append('address', payload.address);
+    if (payload.profession_id) formData.append('profession_id', payload.profession_id);
+    if (payload.dob) formData.append('dob', payload.dob);
+    if (payload.start_date) formData.append('start_date', payload.start_date);
+    if (payload.end_date) formData.append('end_date', payload.end_date);
+    if (payload.faculty_id) formData.append('faculty_id', payload.faculty_id);
+    if (payload.country_id) formData.append('country_id', payload.country_id);
+    if (payload.department) formData.append('department', payload.department);
+    if (payload.gender !== undefined) formData.append('gender', payload.gender);
+    if (payload.status) formData.append('status', payload.status);
+
+    const { data } = await apiClient.put(`/personal-information/${infoId}/update`, formData);
+    return data;
+  } catch (err) {
+    throw err.response?.data || err;
+  }
+}
