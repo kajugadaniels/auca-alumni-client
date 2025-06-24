@@ -507,3 +507,17 @@ export async function updateFaculty(facultyId, payload) {
     throw err.response?.data || err;
   }
 }
+
+/**
+ * Delete a specific faculty by ID.
+ * @param {number} facultyId
+ * @returns {Promise<import('axios').AxiosResponse>}
+ */
+export async function deleteFaculty(facultyId) {
+  try {
+    const { data } = await apiClient.delete(`/faculties/${facultyId}/delete`);
+    return data;
+  } catch (err) {
+    throw err.response?.data || err;
+  }
+}
