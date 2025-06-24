@@ -51,3 +51,17 @@ export async function login({ username, password }) {
     throw err.response?.data || err;
   }
 }
+
+/**
+ * Initiate user registration – verifies student_id & sends OTP to email.
+ * @param {{ student_id: number, email: string, phone_number: string }} payload
+ * @returns {Promise<{ status: string, message: string }>}
+ */
+export async function initiateRegistration(payload) {
+  try {
+    const { data } = await apiClient.post('/auth/register/initiate', payload);
+    return data;
+  } catch (err) {
+    throw err.response?.data || err;
+  }
+}
