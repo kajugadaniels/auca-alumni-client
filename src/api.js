@@ -971,3 +971,17 @@ export async function deleteProfession(professionId) {
     throw err.response?.data || err;
   }
 }
+
+/**
+ * Fetch paginated list of programs.
+ * @param {{ page?: number, page_size?: number, search?: string, sort_by?: string, order?: string }} params
+ * @returns {Promise<import('axios').AxiosResponse>}
+ */
+export async function fetchPrograms(params = {}) {
+  try {
+    const { data } = await apiClient.get('/programs/', { params });
+    return data;
+  } catch (err) {
+    throw err.response?.data || err;
+  }
+}
