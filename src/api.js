@@ -65,3 +65,17 @@ export async function initiateRegistration(payload) {
     throw err.response?.data || err;
   }
 }
+
+/**
+ * Complete user registration – verifies OTP and sets password.
+ * @param {{ student_id: number, otp: string, password: string, confirm_password: string }} payload
+ * @returns {Promise<{ status: string, message: string, user: object }>}
+ */
+export async function completeRegistration(payload) {
+  try {
+    const { data } = await apiClient.post('/auth/register/complete', payload);
+    return data;
+  } catch (err) {
+    throw err.response?.data || err;
+  }
+}
