@@ -1117,3 +1117,17 @@ export async function updateSlider(sliderId, payload) {
     throw err.response?.data || err;
   }
 }
+
+/**
+ * Delete a specific slider by ID.
+ * @param {number} sliderId
+ * @returns {Promise<import('axios').AxiosResponse>}
+ */
+export async function deleteSlider(sliderId) {
+  try {
+    const { data } = await apiClient.delete(`/sliders/${sliderId}/delete`);
+    return data;
+  } catch (err) {
+    throw err.response?.data || err;
+  }
+}
