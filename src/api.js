@@ -436,3 +436,17 @@ export async function updateExecutiveCommittee(memberId, payload) {
     throw err.response?.data || err;
   }
 }
+
+/**
+ * Delete a specific executive committee member by ID.
+ * @param {number} memberId
+ * @returns {Promise<import('axios').AxiosResponse>}
+ */
+export async function deleteExecutiveCommittee(memberId) {
+  try {
+    const { data } = await apiClient.delete(`/executive-committees/${memberId}/delete`);
+    return data;
+  } catch (err) {
+    throw err.response?.data || err;
+  }
+}
