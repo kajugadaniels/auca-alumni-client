@@ -217,3 +217,17 @@ export async function fetchCountries(params = {}) {
     throw err.response?.data || err;
   }
 }
+
+/**
+ * Fetch paginated list of departments.
+ * @param {{ page?: number, page_size?: number, search?: string, sort_by?: string, order?: string }} params
+ * @returns {Promise<import('axios').AxiosResponse>}
+ */
+export async function fetchDepartments(params = {}) {
+  try {
+    const { data } = await apiClient.get('/departments/', { params });
+    return data;
+  } catch (err) {
+    throw err.response?.data || err;
+  }
+}
