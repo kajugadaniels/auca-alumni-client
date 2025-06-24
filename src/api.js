@@ -1242,3 +1242,17 @@ export async function fetchWorkExperiences(params = {}) {
     throw err.response?.data || err;
   }
 }
+
+/**
+ * Fetch detailed information for a single work experience by ID.
+ * @param {number} experienceId
+ * @returns {Promise<import('axios').AxiosResponse>}
+ */
+export async function fetchWorkExperienceDetail(experienceId) {
+  try {
+    const { data } = await apiClient.get(`/work-experiences/${experienceId}`);
+    return data;
+  } catch (err) {
+    throw err.response?.data || err;
+  }
+}
