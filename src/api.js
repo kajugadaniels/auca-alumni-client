@@ -985,3 +985,17 @@ export async function fetchPrograms(params = {}) {
     throw err.response?.data || err;
   }
 }
+
+/**
+ * Fetch detailed information for a single program by ID.
+ * @param {number} programId
+ * @returns {Promise<import('axios').AxiosResponse>}
+ */
+export async function fetchProgramDetail(programId) {
+  try {
+    const { data } = await apiClient.get(`/programs/${programId}`);
+    return data;
+  } catch (err) {
+    throw err.response?.data || err;
+  }
+}
