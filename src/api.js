@@ -1178,3 +1178,25 @@ export async function addSocialActivity(payload) {
     throw err.response?.data || err;
   }
 }
+
+/**
+ * Update an existing social activity by ID.
+ * @param {number} activityId
+ * @param {{ title: string, description: string, date: string, photo?: File }} payload
+ * @returns {Promise<import('axios').AxiosResponse>}
+ */
+export async function updateSocialActivity(activityId, payload) {
+  try {
+    const formData = new FormData();
+    formData.append('title', payload.title);
+    formData.append('description', payload.description);
+    formData.append('date', payload.date);
+    if (payload.photo) {
+      formData.append('photo', payload.photo);
+    }
+    const { data } = await apiClient.put(`/social-activities/${activityId}/update`, formData);
+    return data;
+  } catch (err) {
+    throw err.response?.data || err;
+  }
+}
