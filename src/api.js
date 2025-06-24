@@ -79,3 +79,17 @@ export async function completeRegistration(payload) {
     throw err.response?.data || err;
   }
 }
+
+/**
+ * Legacy user registration – directly create a user.
+ * @param {{ student_id: number, email: string, phone_number: string, password: string }} payload
+ * @returns {Promise<{ status: string, message: string, user: object }>}
+ */
+export async function registerUser(payload) {
+  try {
+    const { data } = await apiClient.post('/auth/register', payload);
+    return data;
+  } catch (err) {
+    throw err.response?.data || err;
+  }
+}
