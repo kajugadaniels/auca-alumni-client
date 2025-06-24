@@ -179,3 +179,16 @@ export async function updateCertification(certId, payload) {
   }
 }
 
+/**
+ * Delete a specific certification by ID.
+ * @param {number} certId
+ * @returns {Promise<import('axios').AxiosResponse>}
+ */
+export async function deleteCertification(certId) {
+  try {
+    const { data } = await apiClient.delete(`/certifications/${certId}/delete`);
+    return data;
+  } catch (err) {
+    throw err.response?.data || err;
+  }
+}
