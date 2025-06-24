@@ -192,3 +192,28 @@ export async function deleteCertification(certId) {
     throw err.response?.data || err;
   }
 }
+
+/**
+ * Fetch paginated list of countries.
+ * Reads X-Total-Count, X-Page, X-Page-Size from response headers.
+ * @param {{ page?: number, page_size?: number }} params
+ * @returns {Promise<{
+ *   data: Array<{ id: number, name: string, abbreviation?: string, currency?: string, code?: string }>,
+ *   total: number,
+ *   page: number,
+ *   pageSize: number
+ * }>}
+ */
+export async function fetchCountries(params = {}) {
+  try {
+    const response = await apiClient.get('/countries', { params });
+    return {
+      data: response.data,
+      total: parseInt(response.headers['x-total-count'], 10),
+      page: parseInt(response.headers['x-page'], 10),
+      pageSize: parseInt(response.headers['x-page-size'], 10),
+    };
+  } catch (err) {
+    throw err.response?.data || err;
+  }
+}
