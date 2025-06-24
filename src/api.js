@@ -302,3 +302,17 @@ export async function fetchEvents(params = {}) {
     throw err.response?.data || err;
   }
 }
+
+/**
+ * Fetch detailed information for a single event by ID.
+ * @param {number} eventId
+ * @returns {Promise<import('axios').AxiosResponse>}
+ */
+export async function fetchEventDetail(eventId) {
+  try {
+    const { data } = await apiClient.get(`/event/${eventId}`);
+    return data;
+  } catch (err) {
+    throw err.response?.data || err;
+  }
+}
