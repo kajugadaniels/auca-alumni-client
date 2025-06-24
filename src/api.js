@@ -568,3 +568,25 @@ export async function addNews(payload) {
     throw err.response?.data || err;
   }
 }
+
+/**
+ * Update an existing news item by ID, optionally replacing the image.
+ * @param {number} newsId
+ * @param {{ title: string, date: string, description: string, photo?: File }} payload
+ * @returns {Promise<import('axios').AxiosResponse>}
+ */
+export async function updateNews(newsId, payload) {
+  try {
+    const formData = new FormData();
+    formData.append('title', payload.title);
+    formData.append('date', payload.date);
+    formData.append('description', payload.description);
+    if (payload.photo) {
+      formData.append('photo', payload.photo);
+    }
+    const { data } = await apiClient.put(`/news/${newsId}/update`, formData);
+    return data;
+  } catch (err) {
+    throw err.response?.data || err;
+  }
+}
