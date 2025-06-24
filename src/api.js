@@ -718,3 +718,17 @@ export async function fetchOpportunityHistoryDetail(historyId) {
     throw err.response?.data || err;
   }
 }
+
+/**
+ * Create a new opportunity history entry.
+ * @param {{ opportunity_id: number, user_id: number, comment: string, status: string }} payload
+ * @returns {Promise<import('axios').AxiosResponse>}
+ */
+export async function addOpportunityHistory(payload) {
+  try {
+    const { data } = await apiClient.post('/opportunity-histories/add', payload);
+    return data;
+  } catch (err) {
+    throw err.response?.data || err;
+  }
+}
