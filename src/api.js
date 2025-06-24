@@ -1310,3 +1310,17 @@ export async function updateWorkExperience(experienceId, payload) {
     throw err.response?.data || err;
   }
 }
+
+/**
+ * Delete a specific work experience by ID.
+ * @param {number} experienceId
+ * @returns {Promise<import('axios').AxiosResponse>}
+ */
+export async function deleteWorkExperience(experienceId) {
+  try {
+    const { data } = await apiClient.delete(`/work-experiences/${experienceId}/delete`);
+    return data;
+  } catch (err) {
+    throw err.response?.data || err;
+  }
+}
