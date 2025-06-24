@@ -590,3 +590,17 @@ export async function updateNews(newsId, payload) {
     throw err.response?.data || err;
   }
 }
+
+/**
+ * Delete a specific news item by ID.
+ * @param {number} newsId
+ * @returns {Promise<import('axios').AxiosResponse>}
+ */
+export async function deleteNews(newsId) {
+  try {
+    const { data } = await apiClient.delete(`/news/${newsId}/delete`);
+    return data;
+  } catch (err) {
+    throw err.response?.data || err;
+  }
+}
