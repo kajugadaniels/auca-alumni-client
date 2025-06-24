@@ -1214,3 +1214,17 @@ export async function deleteSocialActivity(activityId) {
     throw err.response?.data || err;
   }
 }
+
+/**
+ * Fetch paginated list of students.
+ * @param {{ page?: number, page_size?: number, search?: string, sort_by?: string, order?: string }} params
+ * @returns {Promise<import('axios').AxiosResponse>}
+ */
+export async function fetchStudents(params = {}) {
+  try {
+    const { data } = await apiClient.get('/students', { params });
+    return data;
+  } catch (err) {
+    throw err.response?.data || err;
+  }
+}
