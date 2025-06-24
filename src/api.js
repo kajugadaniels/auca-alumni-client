@@ -957,3 +957,17 @@ export async function updateProfession(professionId, payload) {
     throw err.response?.data || err;
   }
 }
+
+/**
+ * Delete a specific profession by ID.
+ * @param {number} professionId
+ * @returns {Promise<import('axios').AxiosResponse>}
+ */
+export async function deleteProfession(professionId) {
+  try {
+    const { data } = await apiClient.delete(`/professions/${professionId}/delete`);
+    return data;
+  } catch (err) {
+    throw err.response?.data || err;
+  }
+}
