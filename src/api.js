@@ -288,3 +288,17 @@ export async function deleteDepartment(departmentId) {
     throw err.response?.data || err;
   }
 }
+
+/**
+ * Fetch paginated list of events.
+ * @param {{ page?: number, page_size?: number, search?: string, sort_by?: string, order?: string }} params
+ * @returns {Promise<import('axios').AxiosResponse>}
+ */
+export async function fetchEvents(params = {}) {
+  try {
+    const { data } = await apiClient.get('/events', { params });
+    return data;
+  } catch (err) {
+    throw err.response?.data || err;
+  }
+}
