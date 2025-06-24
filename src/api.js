@@ -1256,3 +1256,30 @@ export async function fetchWorkExperienceDetail(experienceId) {
     throw err.response?.data || err;
   }
 }
+
+/**
+ * Create a new work experience with optional image upload.
+ * @param {{ company: string, employer: string, job_title: string, job_description: string, start_date: string, end_date?: string, user_id: number, photo?: File }} payload
+ * @returns {Promise<import('axios').AxiosResponse>}
+ */
+export async function addWorkExperience(payload) {
+  try {
+    const formData = new FormData();
+    formData.append('company', payload.company);
+    formData.append('employer', payload.employer);
+    formData.append('job_title', payload.job_title);
+    formData.append('job_description', payload.job_description);
+    formData.append('start_date', payload.start_date);
+    if (payload.end_date) {
+      formData.append('end_date', payload.end_date);
+    }
+    formData.append('user_id', payload.user_id);
+    if (payload.photo) {
+      formData.append('photo', payload.photo);
+    }
+    const { data } = await apiClient.post('/work-experiences/add', formData);
+    return data;
+  } catch (err) {
+    throw err.response?.data || err;
+  }
+}
