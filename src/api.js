@@ -618,3 +618,17 @@ export async function fetchOpportunities(params = {}) {
     throw err.response?.data || err;
   }
 }
+
+/**
+ * Fetch detailed information for a single opportunity by ID.
+ * @param {number} opportunityId
+ * @returns {Promise<import('axios').AxiosResponse>}
+ */
+export async function fetchOpportunityDetail(opportunityId) {
+  try {
+    const { data } = await apiClient.get(`/opportunities/${opportunityId}`);
+    return data;
+  } catch (err) {
+    throw err.response?.data || err;
+  }
+}
