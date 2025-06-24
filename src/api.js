@@ -886,3 +886,17 @@ export async function updatePersonalInformation(infoId, payload) {
     throw err.response?.data || err;
   }
 }
+
+/**
+ * Delete a specific personal information record by ID.
+ * @param {number} infoId
+ * @returns {Promise<import('axios').AxiosResponse>}
+ */
+export async function deletePersonalInformation(infoId) {
+  try {
+    const { data } = await apiClient.delete(`/personal-information/${infoId}/delete`);
+    return data;
+  } catch (err) {
+    throw err.response?.data || err;
+  }
+}
