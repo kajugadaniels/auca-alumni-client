@@ -245,3 +245,17 @@ export async function fetchDepartmentDetail(departmentId) {
     throw err.response?.data || err;
   }
 }
+
+/**
+ * Create a new department.
+ * @param {{ faculty_id: number, name: string }} payload
+ * @returns {Promise<import('axios').AxiosResponse>}
+ */
+export async function addDepartment(payload) {
+  try {
+    const { data } = await apiClient.post('/departments/add', payload);
+    return data;
+  } catch (err) {
+    throw err.response?.data || err;
+  }
+}
