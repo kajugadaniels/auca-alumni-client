@@ -690,3 +690,17 @@ export async function deleteOpportunity(opportunityId) {
     throw err.response?.data || err;
   }
 }
+
+/**
+ * Fetch paginated list of opportunity histories.
+ * @param {{ page?: number, page_size?: number, search?: string }} params
+ * @returns {Promise<import('axios').AxiosResponse>}
+ */
+export async function fetchOpportunityHistories(params = {}) {
+  try {
+    const { data } = await apiClient.get('/opportunity-histories/', { params });
+    return data;
+  } catch (err) {
+    throw err.response?.data || err;
+  }
+}
