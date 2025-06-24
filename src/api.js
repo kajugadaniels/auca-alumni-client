@@ -1145,3 +1145,17 @@ export async function fetchSocialActivities(params = {}) {
     throw err.response?.data || err;
   }
 }
+
+/**
+ * Fetch detailed information for a single social activity by ID.
+ * @param {number} activityId
+ * @returns {Promise<import('axios').AxiosResponse>}
+ */
+export async function fetchSocialActivityDetail(activityId) {
+  try {
+    const { data } = await apiClient.get(`/social-activities/${activityId}`);
+    return data;
+  } catch (err) {
+    throw err.response?.data || err;
+  }
+}
