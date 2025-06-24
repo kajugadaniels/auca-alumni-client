@@ -521,3 +521,17 @@ export async function deleteFaculty(facultyId) {
     throw err.response?.data || err;
   }
 }
+
+/**
+ * Fetch paginated list of news items.
+ * @param {{ page?: number, page_size?: number, search?: string, sort_by?: string, order?: string }} params
+ * @returns {Promise<import('axios').AxiosResponse>}
+ */
+export async function fetchNews(params = {}) {
+  try {
+    const { data } = await apiClient.get('/news', { params });
+    return data;
+  } catch (err) {
+    throw err.response?.data || err;
+  }
+}
