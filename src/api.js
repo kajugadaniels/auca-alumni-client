@@ -383,3 +383,18 @@ export async function fetchExecutiveCommittees(params = {}) {
     throw err.response?.data || err;
   }
 }
+
+/**
+ * Fetch detailed information for a single executive committee member by ID.
+ * @param {number} memberId
+ * @returns {Promise<import('axios').AxiosResponse>}
+ */
+export async function fetchExecutiveCommitteeDetail(memberId) {
+  try {
+    const { data } = await apiClient.get(`/executive-committees/${memberId}`);
+    return data;
+  } catch (err) {
+    throw err.response?.data || err;
+  }
+}
+
