@@ -928,3 +928,17 @@ export async function fetchProfessionDetail(professionId) {
     throw err.response?.data || err;
   }
 }
+
+/**
+ * Create a new profession.
+ * @param {{ name: string }} payload
+ * @returns {Promise<import('axios').AxiosResponse>}
+ */
+export async function addProfession(payload) {
+  try {
+    const { data } = await apiClient.post('/professions/add', payload);
+    return data;
+  } catch (err) {
+    throw err.response?.data || err;
+  }
+}
