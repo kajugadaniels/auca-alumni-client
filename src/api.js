@@ -478,3 +478,17 @@ export async function fetchFacultyDetail(facultyId) {
     throw err.response?.data || err;
   }
 }
+
+/**
+ * Create a new faculty.
+ * @param {{ name: string, description: string }} payload
+ * @returns {Promise<import('axios').AxiosResponse>}
+ */
+export async function addFaculty(payload) {
+  try {
+    const { data } = await apiClient.post('/faculties/add', payload);
+    return data;
+  } catch (err) {
+    throw err.response?.data || err;
+  }
+}
