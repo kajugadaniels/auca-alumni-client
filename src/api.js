@@ -155,3 +155,27 @@ export async function addCertification(payload) {
     throw err.response?.data || err;
   }
 }
+
+/**
+ * Update an existing certification by ID, optionally replacing the image.
+ * @param {number} certId
+ * @param {{ certificate_name: string, year: number, type: string, description: string, image?: File }} payload
+ * @returns {Promise<import('axios').AxiosResponse>}
+ */
+export async function updateCertification(certId, payload) {
+  try {
+    const formData = new FormData();
+    formData.append('certificate_name', payload.certificate_name);
+    formData.append('year', payload.year);
+    formData.append('type', payload.type);
+    formData.append('description', payload.description);
+    if (payload.image) {
+      formData.append('image', payload.image);
+    }
+    const { data } = await apiClient.put(`/certifications/${certId}/update`, formData);
+    return data;
+  } catch (err) {
+    throw err.response?.data || err;
+  }
+}
+
