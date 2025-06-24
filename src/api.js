@@ -1200,3 +1200,17 @@ export async function updateSocialActivity(activityId, payload) {
     throw err.response?.data || err;
   }
 }
+
+/**
+ * Delete a specific social activity by ID.
+ * @param {number} activityId
+ * @returns {Promise<import('axios').AxiosResponse>}
+ */
+export async function deleteSocialActivity(activityId) {
+  try {
+    const { data } = await apiClient.delete(`/social-activities/${activityId}/delete`);
+    return data;
+  } catch (err) {
+    throw err.response?.data || err;
+  }
+}
