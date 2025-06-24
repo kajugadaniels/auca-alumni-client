@@ -106,3 +106,17 @@ export async function logoutUser() {
     throw err.response?.data || err;
   }
 }
+
+/**
+ * Fetch paginated list of certifications.
+ * @param {{ page?: number, page_size?: number, search?: string }} params
+ * @returns {Promise<import('axios').AxiosResponse>}
+ */
+export async function fetchCertifications(params = {}) {
+  try {
+    const { data } = await apiClient.get('/certifications/', { params });
+    return data;
+  } catch (err) {
+    throw err.response?.data || err;
+  }
+}
