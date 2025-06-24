@@ -369,3 +369,17 @@ export async function deleteEvent(eventId) {
     throw err.response?.data || err;
   }
 }
+
+/**
+ * Fetch paginated list of executive committees.
+ * @param {{ page?: number, page_size?: number, search?: string }} params
+ * @returns {Promise<import('axios').AxiosResponse>}
+ */
+export async function fetchExecutiveCommittees(params = {}) {
+  try {
+    const { data } = await apiClient.get('/executive-committees/', { params });
+    return data;
+  } catch (err) {
+    throw err.response?.data || err;
+  }
+}
