@@ -732,3 +732,18 @@ export async function addOpportunityHistory(payload) {
     throw err.response?.data || err;
   }
 }
+
+/**
+ * Update an existing opportunity history by ID.
+ * @param {number} historyId
+ * @param {{ comment: string, status: string }} payload
+ * @returns {Promise<import('axios').AxiosResponse>}
+ */
+export async function updateOpportunityHistory(historyId, payload) {
+  try {
+    const { data } = await apiClient.put(`/opportunity-histories/${historyId}/update`, payload);
+    return data;
+  } catch (err) {
+    throw err.response?.data || err;
+  }
+}
