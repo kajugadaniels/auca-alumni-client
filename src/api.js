@@ -654,3 +654,25 @@ export async function addOpportunity(payload) {
     throw err.response?.data || err;
   }
 }
+
+/**
+ * Update an existing opportunity by ID, optionally replacing the image.
+ * @param {number} opportunityId
+ * @param {{ title: string, description: string, date: string, status?: string, link?: string, photo?: File }} payload
+ * @returns {Promise<import('axios').AxiosResponse>}
+ */
+export async function updateOpportunity(opportunityId, payload) {
+  try {
+    const formData = new FormData();
+    formData.append('title', payload.title);
+    formData.append('description', payload.description);
+    formData.append('date', payload.date);
+    if (payload.status) formData.append('status', payload.status);
+    if (payload.link) formData.append('link', payload.link);
+    if (payload.photo) formData.append('photo', payload.photo);
+    const { data } = await apiClient.put(`/opportunities/${opportunityId}/update`, formData);
+    return data;
+  } catch (err) {
+    throw err.response?.data || err;
+  }
+}
