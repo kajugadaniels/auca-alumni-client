@@ -231,3 +231,17 @@ export async function fetchDepartments(params = {}) {
     throw err.response?.data || err;
   }
 }
+
+/**
+ * Fetch detailed information for a single department by ID.
+ * @param {number} departmentId
+ * @returns {Promise<import('axios').AxiosResponse>}
+ */
+export async function fetchDepartmentDetail(departmentId) {
+  try {
+    const { data } = await apiClient.get(`/departments/${departmentId}`);
+    return data;
+  } catch (err) {
+    throw err.response?.data || err;
+  }
+}
