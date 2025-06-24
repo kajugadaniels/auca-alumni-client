@@ -1052,3 +1052,17 @@ export async function deleteProgram(programId) {
     throw err.response?.data || err;
   }
 }
+
+/**
+ * Fetch paginated list of sliders.
+ * @param {{ page?: number, page_size?: number }} params
+ * @returns {Promise<import('axios').AxiosResponse>}
+ */
+export async function fetchSliders(params = {}) {
+  try {
+    const { data } = await apiClient.get('/sliders/', { params });
+    return data;
+  } catch (err) {
+    throw err.response?.data || err;
+  }
+}
