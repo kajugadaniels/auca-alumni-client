@@ -415,3 +415,24 @@ export async function addExecutiveCommittee(payload) {
     throw err.response?.data || err;
   }
 }
+
+/**
+ * Update an existing executive committee member by ID, optionally replacing the photo.
+ * @param {number} memberId
+ * @param {{ name: string, position: string, photo?: File }} payload
+ * @returns {Promise<import('axios').AxiosResponse>}
+ */
+export async function updateExecutiveCommittee(memberId, payload) {
+  try {
+    const formData = new FormData();
+    formData.append('name', payload.name);
+    formData.append('position', payload.position);
+    if (payload.photo) {
+      formData.append('photo', payload.photo);
+    }
+    const { data } = await apiClient.put(`/executive-committees/${memberId}/update`, formData);
+    return data;
+  } catch (err) {
+    throw err.response?.data || err;
+  }
+}
