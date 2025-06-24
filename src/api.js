@@ -259,3 +259,18 @@ export async function addDepartment(payload) {
     throw err.response?.data || err;
   }
 }
+
+/**
+ * Update an existing department by ID.
+ * @param {number} departmentId
+ * @param {{ faculty_id: number, name: string }} payload
+ * @returns {Promise<import('axios').AxiosResponse>}
+ */
+export async function updateDepartment(departmentId, payload) {
+  try {
+    const { data } = await apiClient.put(`/departments/${departmentId}/update`, payload);
+    return data;
+  } catch (err) {
+    throw err.response?.data || err;
+  }
+}
