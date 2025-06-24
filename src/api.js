@@ -676,3 +676,17 @@ export async function updateOpportunity(opportunityId, payload) {
     throw err.response?.data || err;
   }
 }
+
+/**
+ * Delete a specific opportunity by ID.
+ * @param {number} opportunityId
+ * @returns {Promise<import('axios').AxiosResponse>}
+ */
+export async function deleteOpportunity(opportunityId) {
+  try {
+    const { data } = await apiClient.delete(`/opportunities/${opportunityId}/delete`);
+    return data;
+  } catch (err) {
+    throw err.response?.data || err;
+  }
+}
