@@ -747,3 +747,17 @@ export async function updateOpportunityHistory(historyId, payload) {
     throw err.response?.data || err;
   }
 }
+
+/**
+ * Delete a specific opportunity history by ID.
+ * @param {number} historyId
+ * @returns {Promise<import('axios').AxiosResponse>}
+ */
+export async function deleteOpportunityHistory(historyId) {
+  try {
+    const { data } = await apiClient.delete(`/opportunity-histories/${historyId}/delete`);
+    return data;
+  } catch (err) {
+    throw err.response?.data || err;
+  }
+}
