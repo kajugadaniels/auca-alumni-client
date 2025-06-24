@@ -355,3 +355,17 @@ export async function updateEvent(eventId, payload) {
     throw err.response?.data || err;
   }
 }
+
+/**
+ * Delete a specific event by ID.
+ * @param {number} eventId
+ * @returns {Promise<import('axios').AxiosResponse>}
+ */
+export async function deleteEvent(eventId) {
+  try {
+    const { data } = await apiClient.delete(`/event/${eventId}/delete`);
+    return data;
+  } catch (err) {
+    throw err.response?.data || err;
+  }
+}
