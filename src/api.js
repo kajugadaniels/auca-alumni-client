@@ -900,3 +900,17 @@ export async function deletePersonalInformation(infoId) {
     throw err.response?.data || err;
   }
 }
+
+/**
+ * Fetch paginated list of professions.
+ * @param {{ page?: number, page_size?: number, search?: string }} params
+ * @returns {Promise<import('axios').AxiosResponse>}
+ */
+export async function fetchProfessions(params = {}) {
+  try {
+    const { data } = await apiClient.get('/professions/', { params });
+    return data;
+  } catch (err) {
+    throw err.response?.data || err;
+  }
+}
