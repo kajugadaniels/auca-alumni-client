@@ -1159,3 +1159,22 @@ export async function fetchSocialActivityDetail(activityId) {
     throw err.response?.data || err;
   }
 }
+
+/**
+ * Create a new social activity with image upload.
+ * @param {{ title: string, description: string, date: string, photo: File }} payload
+ * @returns {Promise<import('axios').AxiosResponse>}
+ */
+export async function addSocialActivity(payload) {
+  try {
+    const formData = new FormData();
+    formData.append('title', payload.title);
+    formData.append('description', payload.description);
+    formData.append('date', payload.date);
+    formData.append('photo', payload.photo);
+    const { data } = await apiClient.post('/social-activities/add', formData);
+    return data;
+  } catch (err) {
+    throw err.response?.data || err;
+  }
+}
