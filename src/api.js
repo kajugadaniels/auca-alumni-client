@@ -120,3 +120,17 @@ export async function fetchCertifications(params = {}) {
     throw err.response?.data || err;
   }
 }
+
+/**
+ * Fetch detailed information for a single certification by ID.
+ * @param {number} certId
+ * @returns {Promise<import('axios').AxiosResponse>}
+ */
+export async function fetchCertificationDetail(certId) {
+  try {
+    const { data } = await apiClient.get(`/certifications/${certId}`);
+    return data;
+  } catch (err) {
+    throw err.response?.data || err;
+  }
+}
