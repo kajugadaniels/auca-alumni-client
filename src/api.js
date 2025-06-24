@@ -942,3 +942,18 @@ export async function addProfession(payload) {
     throw err.response?.data || err;
   }
 }
+
+/**
+ * Update an existing profession by ID.
+ * @param {number} professionId
+ * @param {{ name: string }} payload
+ * @returns {Promise<import('axios').AxiosResponse>}
+ */
+export async function updateProfession(professionId, payload) {
+  try {
+    const { data } = await apiClient.put(`/professions/${professionId}/update`, payload);
+    return data;
+  } catch (err) {
+    throw err.response?.data || err;
+  }
+}
