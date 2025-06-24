@@ -464,3 +464,17 @@ export async function fetchFaculties(params = {}) {
     throw err.response?.data || err;
   }
 }
+
+/**
+ * Fetch detailed information for a single faculty by ID.
+ * @param {number} facultyId
+ * @returns {Promise<import('axios').AxiosResponse>}
+ */
+export async function fetchFacultyDetail(facultyId) {
+  try {
+    const { data } = await apiClient.get(`/faculties/${facultyId}`);
+    return data;
+  } catch (err) {
+    throw err.response?.data || err;
+  }
+}
