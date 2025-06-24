@@ -1283,3 +1283,30 @@ export async function addWorkExperience(payload) {
     throw err.response?.data || err;
   }
 }
+
+/**
+ * Update an existing work experience by ID, optionally replacing the image.
+ * @param {number} experienceId
+ * @param {{ company: string, employer: string, job_title: string, job_description: string, start_date: string, end_date?: string, photo?: File }} payload
+ * @returns {Promise<import('axios').AxiosResponse>}
+ */
+export async function updateWorkExperience(experienceId, payload) {
+  try {
+    const formData = new FormData();
+    formData.append('company', payload.company);
+    formData.append('employer', payload.employer);
+    formData.append('job_title', payload.job_title);
+    formData.append('job_description', payload.job_description);
+    formData.append('start_date', payload.start_date);
+    if (payload.end_date !== undefined) {
+      formData.append('end_date', payload.end_date);
+    }
+    if (payload.photo) {
+      formData.append('photo', payload.photo);
+    }
+    const { data } = await apiClient.put(`/work-experiences/${experienceId}/update`, formData);
+    return data;
+  } catch (err) {
+    throw err.response?.data || err;
+  }
+}
