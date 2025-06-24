@@ -1097,3 +1097,23 @@ export async function addSlider(payload) {
     throw err.response?.data || err;
   }
 }
+
+/**
+ * Update an existing slider by ID, optionally replacing the image.
+ * @param {number} sliderId
+ * @param {{ description: string, photo?: File }} payload
+ * @returns {Promise<import('axios').AxiosResponse>}
+ */
+export async function updateSlider(sliderId, payload) {
+  try {
+    const formData = new FormData();
+    formData.append('description', payload.description);
+    if (payload.photo) {
+      formData.append('photo', payload.photo);
+    }
+    const { data } = await apiClient.put(`/sliders/${sliderId}/update`, formData);
+    return data;
+  } catch (err) {
+    throw err.response?.data || err;
+  }
+}
