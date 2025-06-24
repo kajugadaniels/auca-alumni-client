@@ -1066,3 +1066,17 @@ export async function fetchSliders(params = {}) {
     throw err.response?.data || err;
   }
 }
+
+/**
+ * Fetch detailed information for a single slider by ID.
+ * @param {number} sliderId
+ * @returns {Promise<import('axios').AxiosResponse>}
+ */
+export async function fetchSliderDetail(sliderId) {
+  try {
+    const { data } = await apiClient.get(`/sliders/${sliderId}`);
+    return data;
+  } catch (err) {
+    throw err.response?.data || err;
+  }
+}
