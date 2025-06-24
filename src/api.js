@@ -92,3 +92,17 @@ export async function verifyToken() {
     throw err.response?.data || err;
   }
 }
+
+/**
+ * User logout – revokes current user's token.
+ * @returns {Promise<{ status: string, message: string }>}
+ */
+export async function logoutUser() {
+  try {
+    const { data } = await apiClient.post('/auth/logout');
+    localStorage.removeItem('token');
+    return data;
+  } catch (err) {
+    throw err.response?.data || err;
+  }
+}
