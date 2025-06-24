@@ -604,3 +604,17 @@ export async function deleteNews(newsId) {
     throw err.response?.data || err;
   }
 }
+
+/**
+ * Fetch paginated list of opportunities with nested user data.
+ * @param {{ page?: number, page_size?: number, search?: string, sort_by?: string, order?: string }} params
+ * @returns {Promise<import('axios').AxiosResponse>}
+ */
+export async function fetchOpportunities(params = {}) {
+  try {
+    const { data } = await apiClient.get('/opportunities/', { params });
+    return data;
+  } catch (err) {
+    throw err.response?.data || err;
+  }
+}
