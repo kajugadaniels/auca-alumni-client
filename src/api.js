@@ -316,3 +316,21 @@ export async function fetchEventDetail(eventId) {
     throw err.response?.data || err;
   }
 }
+
+/**
+ * Create a new event with image upload.
+ * @param {{ event_date: string, description: string, photo: File }} payload
+ * @returns {Promise<import('axios').AxiosResponse>}
+ */
+export async function addEvent(payload) {
+  try {
+    const formData = new FormData();
+    formData.append('event_date', payload.event_date);
+    formData.append('description', payload.description);
+    formData.append('photo', payload.photo);
+    const { data } = await apiClient.post('/event/add', formData);
+    return data;
+  } catch (err) {
+    throw err.response?.data || err;
+  }
+}
