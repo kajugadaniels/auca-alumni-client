@@ -81,13 +81,12 @@ export async function completeRegistration(payload) {
 }
 
 /**
- * Legacy user registration – directly create a user.
- * @param {{ student_id: number, email: string, phone_number: string, password: string }} payload
+ * Verify user access token – confirms validity and fetches user info.
  * @returns {Promise<{ status: string, message: string, user: object }>}
  */
-export async function registerUser(payload) {
+export async function verifyToken() {
   try {
-    const { data } = await apiClient.post('/auth/register', payload);
+    const { data } = await apiClient.get('/auth/verify-token');
     return data;
   } catch (err) {
     throw err.response?.data || err;
