@@ -134,3 +134,24 @@ export async function fetchCertificationDetail(certId) {
     throw err.response?.data || err;
   }
 }
+
+/**
+ * Create a new certification with image upload.
+ * @param {{ user_id: number, certificate_name: string, year: number, type: string, description: string, image: File }} payload
+ * @returns {Promise<import('axios').AxiosResponse>}
+ */
+export async function addCertification(payload) {
+  try {
+    const formData = new FormData();
+    formData.append('user_id', payload.user_id);
+    formData.append('certificate_name', payload.certificate_name);
+    formData.append('year', payload.year);
+    formData.append('type', payload.type);
+    formData.append('description', payload.description);
+    formData.append('image', payload.image);
+    const { data } = await apiClient.post('/certifications/add', formData);
+    return data;
+  } catch (err) {
+    throw err.response?.data || err;
+  }
+}
