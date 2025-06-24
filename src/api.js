@@ -535,3 +535,17 @@ export async function fetchNews(params = {}) {
     throw err.response?.data || err;
   }
 }
+
+/**
+ * Fetch detailed information for a single news item by ID.
+ * @param {number} newsId
+ * @returns {Promise<import('axios').AxiosResponse>}
+ */
+export async function fetchNewsDetail(newsId) {
+  try {
+    const { data } = await apiClient.get(`/news/${newsId}`);
+    return data;
+  } catch (err) {
+    throw err.response?.data || err;
+  }
+}
