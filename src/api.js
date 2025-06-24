@@ -334,3 +334,24 @@ export async function addEvent(payload) {
     throw err.response?.data || err;
   }
 }
+
+/**
+ * Update an existing event by ID, optionally replacing the photo.
+ * @param {number} eventId
+ * @param {{ event_date: string, description: string, photo?: File }} payload
+ * @returns {Promise<import('axios').AxiosResponse>}
+ */
+export async function updateEvent(eventId, payload) {
+  try {
+    const formData = new FormData();
+    formData.append('event_date', payload.event_date);
+    formData.append('description', payload.description);
+    if (payload.photo) {
+      formData.append('photo', payload.photo);
+    }
+    const { data } = await apiClient.put(`/event/${eventId}/update/`, formData);
+    return data;
+  } catch (err) {
+    throw err.response?.data || err;
+  }
+}
