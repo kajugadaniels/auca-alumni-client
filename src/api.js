@@ -632,3 +632,25 @@ export async function fetchOpportunityDetail(opportunityId) {
     throw err.response?.data || err;
   }
 }
+
+/**
+ * Create a new opportunity with image upload.
+ * @param {{ title: string, description: string, date: string, user_id: number, status?: string, link?: string, photo: File }} payload
+ * @returns {Promise<import('axios').AxiosResponse>}
+ */
+export async function addOpportunity(payload) {
+  try {
+    const formData = new FormData();
+    formData.append('title', payload.title);
+    formData.append('description', payload.description);
+    formData.append('date', payload.date);
+    formData.append('user_id', payload.user_id);
+    if (payload.status) formData.append('status', payload.status);
+    if (payload.link) formData.append('link', payload.link);
+    formData.append('photo', payload.photo);
+    const { data } = await apiClient.post('/opportunities/add', formData);
+    return data;
+  } catch (err) {
+    throw err.response?.data || err;
+  }
+}
