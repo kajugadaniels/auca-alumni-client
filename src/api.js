@@ -274,3 +274,17 @@ export async function updateDepartment(departmentId, payload) {
     throw err.response?.data || err;
   }
 }
+
+/**
+ * Delete a specific department by ID.
+ * @param {number} departmentId
+ * @returns {Promise<import('axios').AxiosResponse>}
+ */
+export async function deleteDepartment(departmentId) {
+  try {
+    const { data } = await apiClient.delete(`/departments/${departmentId}/delete`);
+    return data;
+  } catch (err) {
+    throw err.response?.data || err;
+  }
+}
