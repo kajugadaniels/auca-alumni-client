@@ -1131,3 +1131,17 @@ export async function deleteSlider(sliderId) {
     throw err.response?.data || err;
   }
 }
+
+/**
+ * Fetch paginated list of social activities.
+ * @param {{ page?: number, page_size?: number, search?: string, sort_by?: string, order?: string }} params
+ * @returns {Promise<import('axios').AxiosResponse>}
+ */
+export async function fetchSocialActivities(params = {}) {
+  try {
+    const { data } = await apiClient.get('/social-activities/', { params });
+    return data;
+  } catch (err) {
+    throw err.response?.data || err;
+  }
+}
