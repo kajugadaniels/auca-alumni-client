@@ -761,3 +761,17 @@ export async function deleteOpportunityHistory(historyId) {
     throw err.response?.data || err;
   }
 }
+
+/**
+ * Fetch paginated list of personal information records.
+ * @param {{ page?: number, page_size?: number, search?: string }} params
+ * @returns {Promise<import('axios').AxiosResponse>}
+ */
+export async function fetchPersonalInformation(params = {}) {
+  try {
+    const { data } = await apiClient.get('/personal-information/', { params });
+    return data;
+  } catch (err) {
+    throw err.response?.data || err;
+  }
+}
