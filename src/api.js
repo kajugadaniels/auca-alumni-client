@@ -1038,3 +1038,17 @@ export async function updateProgram(programId, payload) {
     throw err.response?.data || err;
   }
 }
+
+/**
+ * Delete a specific program by ID.
+ * @param {number} programId
+ * @returns {Promise<import('axios').AxiosResponse>}
+ */
+export async function deleteProgram(programId) {
+  try {
+    const { data } = await apiClient.delete(`/programs/${programId}/delete`);
+    return data;
+  } catch (err) {
+    throw err.response?.data || err;
+  }
+}
