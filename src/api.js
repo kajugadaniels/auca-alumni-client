@@ -1080,3 +1080,20 @@ export async function fetchSliderDetail(sliderId) {
     throw err.response?.data || err;
   }
 }
+
+/**
+ * Create a new slider with image upload.
+ * @param {{ description: string, photo: File }} payload
+ * @returns {Promise<import('axios').AxiosResponse>}
+ */
+export async function addSlider(payload) {
+  try {
+    const formData = new FormData();
+    formData.append('description', payload.description);
+    formData.append('photo', payload.photo);
+    const { data } = await apiClient.post('/sliders/add', formData);
+    return data;
+  } catch (err) {
+    throw err.response?.data || err;
+  }
+}
