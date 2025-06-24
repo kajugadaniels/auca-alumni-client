@@ -398,3 +398,20 @@ export async function fetchExecutiveCommitteeDetail(memberId) {
   }
 }
 
+/**
+ * Create a new executive committee member with image upload.
+ * @param {{ name: string, position: string, photo: File }} payload
+ * @returns {Promise<import('axios').AxiosResponse>}
+ */
+export async function addExecutiveCommittee(payload) {
+  try {
+    const formData = new FormData();
+    formData.append('name', payload.name);
+    formData.append('position', payload.position);
+    formData.append('photo', payload.photo);
+    const { data } = await apiClient.post('/executive-committees/add', formData);
+    return data;
+  } catch (err) {
+    throw err.response?.data || err;
+  }
+}
