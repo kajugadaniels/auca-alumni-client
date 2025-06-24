@@ -549,3 +549,22 @@ export async function fetchNewsDetail(newsId) {
     throw err.response?.data || err;
   }
 }
+
+/**
+ * Create a new news item with image upload.
+ * @param {{ title: string, date: string, description: string, photo: File }} payload
+ * @returns {Promise<import('axios').AxiosResponse>}
+ */
+export async function addNews(payload) {
+  try {
+    const formData = new FormData();
+    formData.append('title', payload.title);
+    formData.append('date', payload.date);
+    formData.append('description', payload.description);
+    formData.append('photo', payload.photo);
+    const { data } = await apiClient.post('/news/add', formData);
+    return data;
+  } catch (err) {
+    throw err.response?.data || err;
+  }
+}
