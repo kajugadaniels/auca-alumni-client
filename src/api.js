@@ -1228,3 +1228,17 @@ export async function fetchStudents(params = {}) {
     throw err.response?.data || err;
   }
 }
+
+/**
+ * Fetch paginated list of work experiences.
+ * @param {{ page?: number, page_size?: number, search?: string }} params
+ * @returns {Promise<import('axios').AxiosResponse>}
+ */
+export async function fetchWorkExperiences(params = {}) {
+  try {
+    const { data } = await apiClient.get('/work-experiences/', { params });
+    return data;
+  } catch (err) {
+    throw err.response?.data || err;
+  }
+}
