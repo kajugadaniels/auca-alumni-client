@@ -450,3 +450,17 @@ export async function deleteExecutiveCommittee(memberId) {
     throw err.response?.data || err;
   }
 }
+
+/**
+ * Fetch paginated list of faculties.
+ * @param {{ page?: number, page_size?: number, search?: string, sort_by?: string, order?: string }} params
+ * @returns {Promise<import('axios').AxiosResponse>}
+ */
+export async function fetchFaculties(params = {}) {
+  try {
+    const { data } = await apiClient.get('/faculties/', { params });
+    return data;
+  } catch (err) {
+    throw err.response?.data || err;
+  }
+}
