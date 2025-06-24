@@ -775,3 +775,17 @@ export async function fetchPersonalInformation(params = {}) {
     throw err.response?.data || err;
   }
 }
+
+/**
+ * Fetch detailed personal information by ID.
+ * @param {number} infoId
+ * @returns {Promise<import('axios').AxiosResponse>}
+ */
+export async function fetchPersonalInformationDetail(infoId) {
+  try {
+    const { data } = await apiClient.get(`/personal-information/${infoId}`);
+    return data;
+  } catch (err) {
+    throw err.response?.data || err;
+  }
+}
