@@ -914,3 +914,17 @@ export async function fetchProfessions(params = {}) {
     throw err.response?.data || err;
   }
 }
+
+/**
+ * Fetch detailed information for a single profession by ID.
+ * @param {number} professionId
+ * @returns {Promise<import('axios').AxiosResponse>}
+ */
+export async function fetchProfessionDetail(professionId) {
+  try {
+    const { data } = await apiClient.get(`/professions/${professionId}`);
+    return data;
+  } catch (err) {
+    throw err.response?.data || err;
+  }
+}
