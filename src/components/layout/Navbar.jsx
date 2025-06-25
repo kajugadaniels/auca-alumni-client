@@ -12,11 +12,11 @@ const Navbar = ({ toggleSidebar, handleLogout }) => {
 
   // Function to verify if the user is logged in
   const checkLoginStatus = async () => {
-    const isTokenChecked = sessionStorage.getItem("tokenChecked");
+    const token = localStorage.getItem("token"); // Retrieve the token from localStorage
 
-    // Prevent redundant token check if it has already been checked
-    if (isTokenChecked) {
-      setIsLoading(false); // Stop loading if token check is already completed
+    if (!token) {
+      setIsLoggedIn(false);  // No token found, user is not logged in
+      setIsLoading(false);   // Stop loading
       return;
     }
 
@@ -25,10 +25,10 @@ const Navbar = ({ toggleSidebar, handleLogout }) => {
       setIsLoggedIn(true);   // If token is valid, user is logged in
     } catch (error) {
       setIsLoggedIn(false);  // If token verification fails, user is logged out
+      localStorage.removeItem("token"); // Clear invalid token
       navigate('/login');    // Redirect to login if not logged in
     } finally {
       setIsLoading(false);   // Stop loading after the verification is done
-      sessionStorage.setItem("tokenChecked", "true");  // Mark the token as checked
     }
   };
 
