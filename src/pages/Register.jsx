@@ -87,10 +87,10 @@ export default function Register() {
           </>
         ) : (
           <>
-            <div className="auth-field">
+            {/* <div className="auth-field">
               <label>Full Name</label>
               <input type="text" value={name} readOnly />
-            </div>
+            </div> */}
 
             <div className="auth-field">
               <label htmlFor="otp">OTP</label>
