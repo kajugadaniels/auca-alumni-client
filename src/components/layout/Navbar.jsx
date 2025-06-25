@@ -12,6 +12,14 @@ const Navbar = ({ toggleSidebar, handleLogout }) => {
 
   // Function to verify if the user is logged in
   const checkLoginStatus = async () => {
+    const isTokenChecked = sessionStorage.getItem("tokenChecked");
+
+    // Prevent redundant token check if it has already been checked
+    if (isTokenChecked) {
+      setIsLoading(false); // Stop loading if token check is already completed
+      return;
+    }
+
     try {
       await verifyToken();  // Call the API to verify the token
       setIsLoggedIn(true);   // If token is valid, user is logged in
@@ -20,6 +28,7 @@ const Navbar = ({ toggleSidebar, handleLogout }) => {
       navigate('/login');    // Redirect to login if not logged in
     } finally {
       setIsLoading(false);   // Stop loading after the verification is done
+      sessionStorage.setItem("tokenChecked", "true");  // Mark the token as checked
     }
   };
 
@@ -27,6 +36,7 @@ const Navbar = ({ toggleSidebar, handleLogout }) => {
     checkLoginStatus();  // Check login status when the component mounts
   }, []);
 
+  // Loading state UI
   if (isLoading) {
     return <div>Loading...</div>;  // Display a loading state while checking the login status
   }
