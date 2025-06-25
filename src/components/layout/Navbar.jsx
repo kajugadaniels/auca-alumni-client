@@ -17,8 +17,9 @@ const Navbar = ({ toggleSidebar, handleLogout }) => {
       setIsLoggedIn(true);   // If token is valid, user is logged in
     } catch (error) {
       setIsLoggedIn(false);  // If token verification fails, user is logged out
+      navigate('/login');    // Redirect to login if not logged in
     } finally {
-      setIsLoading(false);   // Stop loading
+      setIsLoading(false);   // Stop loading after the verification is done
     }
   };
 
@@ -26,12 +27,16 @@ const Navbar = ({ toggleSidebar, handleLogout }) => {
     checkLoginStatus();  // Check login status when the component mounts
   }, []);
 
+  if (isLoading) {
+    return <div>Loading...</div>;  // Display a loading state while checking the login status
+  }
+
   return (
     <header className="navbar">
       <div className="navbar-container">
         <div className="navbar-left">
           {/* Only show the menu button if the user is logged in */}
-          {isLoggedIn && !isLoading && (
+          {isLoggedIn && (
             <button onClick={toggleSidebar} className="menu-button">
               <Menu size={24} />
             </button>
