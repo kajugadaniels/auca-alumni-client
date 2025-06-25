@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import '../../styles/Navbar.css'; // Import the CSS file
 import { verifyToken } from '../../api';  // Import API function to verify token
 
-const Navbar = ({ toggleSidebar, handleLogout }) => {
+const Navbar = ({ toggleSidebar }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isLoading, setIsLoading] = useState(true);  // For loading state on token verification
@@ -35,6 +35,14 @@ const Navbar = ({ toggleSidebar, handleLogout }) => {
   useEffect(() => {
     checkLoginStatus();  // Check login status when the component mounts
   }, []);
+
+  // Handle logout logic
+  const handleLogout = () => {
+    localStorage.removeItem("token"); // Remove the token from localStorage
+    setIsLoggedIn(false);  // Update the login status to false
+    navigate('/login');    // Redirect to login page
+    window.location.reload();  // Reload the page to reset the state completely
+  };
 
   // Loading state UI
   if (isLoading) {
