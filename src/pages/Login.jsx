@@ -25,6 +25,7 @@ export default function Login() {
       localStorage.setItem("token", response.access_token); // Store token
       toast.success("Login successful!");
       navigate("/dashboard"); // Redirect to dashboard or homepage
+      window.location.reload();  // Reload the page after successful login
     } catch (error) {
       toast.error("Invalid credentials. Please try again.");
     } finally {
