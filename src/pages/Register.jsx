@@ -2,33 +2,50 @@ import React, { useState } from "react";
 import "../styles/auth.css";
 import { ToastContainer, toast } from "react-toastify";  // Import ToastContainer and toast
 import 'react-toastify/dist/ReactToastify.css';  // Import the CSS for Toastify
+import { initiateRegistration, completeRegistration } from "../api";  // Import API functions
 
 export default function Register() {
   const [studentId, setStudentId] = useState("");
-  const [name, setName] = useState("");
-  const [isVerified, setIsVerified] = useState(false);
   const [email, setEmail] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [isVerified, setIsVerified] = useState(false);
+  const [name, setName] = useState("");
+  const [otp, setOtp] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
-  const handleVerify = () => {
-    // Mocked verification logic - you can replace with API call
-    if (studentId.trim() === "AUCA123") {
-      setName("Paccy & Bertrard");
+  const handleVerifyStudentId = async () => {
+    try {
+      const data = await initiateRegistration({
+        student_id: studentId,
+        email: email,
+        phone_number: phoneNumber
+      });
+      setName(data.name);
       setIsVerified(true);
-      toast.success("Student ID verified successfully!");  // Success notification
-    } else {
-      toast.error("Invalid Student ID");  // Error notification
+      toast.success(data.message); // Display success message
+    } catch (err) {
+      toast.error(err.message || "Student ID verification failed"); // Handle errors
     }
   };
 
-  const handleRegister = () => {
+  const handleCompleteRegistration = async () => {
     if (password !== confirmPassword) {
-      toast.error("Passwords do not match!");  // Error notification
+      toast.error("Passwords do not match!");
       return;
     }
-    // Submit logic here (e.g., API call)
-    toast.success("Account created successfully!");  // Success notification
+    try {
+      const data = await completeRegistration({
+        student_id: studentId,
+        otp: otp,
+        password: password,
+        confirm_password: confirmPassword
+      });
+      toast.success(data.message); // Display success message
+      // Redirect to login page or automatically log the user in
+    } catch (err) {
+      toast.error(err.message || "Registration failed"); // Handle errors
+    }
   };
 
   return (
@@ -36,26 +53,18 @@ export default function Register() {
       <div className="auth-card">
         <h2 className="auth-title">AUCA Alumni Register</h2>
 
-        <div className="auth-field">
-          <label htmlFor="studentId">Student ID</label>
-          <input
-            id="studentId"
-            type="text"
-            value={studentId}
-            onChange={(e) => setStudentId(e.target.value)}
-            placeholder="Enter your AUCA Student ID"
-          />
-        </div>
-
+        {/* Step 1: Student ID, Email, Phone */}
         {!isVerified ? (
-          <button className="auth-button" onClick={handleVerify}>
-            Verify Student ID
-          </button>
-        ) : (
           <>
             <div className="auth-field">
-              <label>Full Name</label>
-              <input type="text" value={name} readOnly />
+              <label htmlFor="studentId">Student ID</label>
+              <input
+                id="studentId"
+                type="text"
+                value={studentId}
+                onChange={(e) => setStudentId(e.target.value)}
+                placeholder="Enter your AUCA Student ID"
+              />
             </div>
 
             <div className="auth-field">
@@ -63,9 +72,38 @@ export default function Register() {
               <input
                 id="email"
                 type="email"
-                placeholder="paccyandbertrard@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                placeholder="Enter your email"
+              />
+            </div>
+
+            <div className="auth-field">
+              <label htmlFor="phoneNumber">Phone Number</label>
+              <input
+                id="phoneNumber"
+                type="text"
+                value={phoneNumber}
+                onChange={(e) => setPhoneNumber(e.target.value)}
+                placeholder="Enter your phone number"
+              />
+            </div>
+
+            <button className="auth-button" onClick={handleVerifyStudentId}>
+              Verify Student ID
+            </button>
+          </>
+        ) : (
+          // Step 2: OTP, Password and Confirm Password
+          <>
+            <div className="auth-field">
+              <label htmlFor="otp">Enter OTP</label>
+              <input
+                id="otp"
+                type="text"
+                value={otp}
+                onChange={(e) => setOtp(e.target.value)}
+                placeholder="Enter the OTP sent to your email"
               />
             </div>
 
@@ -74,9 +112,9 @@ export default function Register() {
               <input
                 id="password"
                 type="password"
-                placeholder="Create a password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                placeholder="Enter your password"
               />
             </div>
 
@@ -85,14 +123,14 @@ export default function Register() {
               <input
                 id="confirmPassword"
                 type="password"
-                placeholder="Confirm your password"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
+                placeholder="Confirm your password"
               />
             </div>
 
-            <button className="auth-button" onClick={handleRegister}>
-              Create Account
+            <button className="auth-button" onClick={handleCompleteRegistration}>
+              Complete Registration
             </button>
           </>
         )}
