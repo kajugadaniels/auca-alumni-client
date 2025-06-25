@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { fetchEvents } from '../api';  // Import the fetchEvents function
 import '../styles/Event.css';
 
+const dummyImage = "https://www.testo.com/images/not-available.jpg";
+
 const Events = () => {
   const [events, setEvents] = useState([]);
   const [totalEvents, setTotalEvents] = useState(0);
@@ -63,6 +65,11 @@ const Events = () => {
     setPage(1);  // Reset to first page on sort change
   };
 
+  // Handle image error (fallback to dummy image)
+  const handleImageError = (e) => {
+    e.target.src = dummyImage;  // Set fallback image if the original image fails
+  };
+
   return (
     <div className="event-container">
       <h1 className="event-title">Upcoming Alumni Events</h1>
@@ -101,7 +108,12 @@ const Events = () => {
         ) : (
           events.map((event) => (
             <div key={event.id} className="event-card">
-              <img src={event.photo} alt={event.title} className="event-image" />
+              <img 
+                src={event.photo} 
+                alt={event.title} 
+                className="event-image" 
+                onError={handleImageError}  // Trigger fallback on error
+              />
               <div className="event-details">
                 <h3 className="event-card-title">{event.title}</h3>
                 <p className="event-card-date">{event.date}</p>
