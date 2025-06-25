@@ -1,50 +1,43 @@
 import React, { useState } from "react";
 import "../styles/auth.css";
-import { ToastContainer, toast } from "react-toastify";  // Import ToastContainer and toast
-import 'react-toastify/dist/ReactToastify.css';  // Import the CSS for Toastify
-import { initiateRegistration, completeRegistration } from "../api";  // Import API functions
+import { ToastContainer, toast } from "react-toastify";
+import { initiateRegistration, completeRegistration } from "../api";
 
 export default function Register() {
   const [studentId, setStudentId] = useState("");
+  const [name, setName] = useState("");
+  const [isVerified, setIsVerified] = useState(false);
   const [email, setEmail] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
-  const [isVerified, setIsVerified] = useState(false);
-  const [name, setName] = useState("");
   const [otp, setOtp] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
-  const handleVerifyStudentId = async () => {
+  // Step 1: Verify Student ID
+  const handleVerify = async () => {
     try {
-      const data = await initiateRegistration({
-        student_id: studentId,
-        email: email,
-        phone_number: phoneNumber
-      });
-      setName(data.name);
+      const response = await initiateRegistration({ student_id: studentId, email, phone_number: phoneNumber });
+      setName(response.first_name + " " + response.last_name);
       setIsVerified(true);
-      toast.success(data.message); // Display success message
+      toast.success("Student ID verified successfully! Please check your email for the OTP.");
     } catch (err) {
-      toast.error(err.message || "Student ID verification failed"); // Handle errors
+      toast.error("Error verifying student ID: " + err.message);
     }
   };
 
-  const handleCompleteRegistration = async () => {
+  // Step 2: Complete Registration
+  const handleRegister = async () => {
     if (password !== confirmPassword) {
       toast.error("Passwords do not match!");
       return;
     }
     try {
-      const data = await completeRegistration({
-        student_id: studentId,
-        otp: otp,
-        password: password,
-        confirm_password: confirmPassword
-      });
-      toast.success(data.message); // Display success message
-      // Redirect to login page or automatically log the user in
+      const response = await completeRegistration({ student_id: studentId, otp, password, confirm_password: password });
+      toast.success("Registration complete! You can now log in.");
+      // Optionally, redirect to login page
+      window.location.href = "/login";
     } catch (err) {
-      toast.error(err.message || "Registration failed"); // Handle errors
+      toast.error("Error completing registration: " + err.message);
     }
   };
 
@@ -53,20 +46,19 @@ export default function Register() {
       <div className="auth-card">
         <h2 className="auth-title">AUCA Alumni Register</h2>
 
-        {/* Step 1: Student ID, Email, Phone */}
+        <div className="auth-field">
+          <label htmlFor="studentId">Student ID</label>
+          <input
+            id="studentId"
+            type="text"
+            value={studentId}
+            onChange={(e) => setStudentId(e.target.value)}
+            placeholder="Enter your AUCA Student ID"
+          />
+        </div>
+
         {!isVerified ? (
           <>
-            <div className="auth-field">
-              <label htmlFor="studentId">Student ID</label>
-              <input
-                id="studentId"
-                type="text"
-                value={studentId}
-                onChange={(e) => setStudentId(e.target.value)}
-                placeholder="Enter your AUCA Student ID"
-              />
-            </div>
-
             <div className="auth-field">
               <label htmlFor="email">Email</label>
               <input
@@ -89,15 +81,19 @@ export default function Register() {
               />
             </div>
 
-            <button className="auth-button" onClick={handleVerifyStudentId}>
+            <button className="auth-button" onClick={handleVerify}>
               Verify Student ID
             </button>
           </>
         ) : (
-          // Step 2: OTP, Password and Confirm Password
           <>
             <div className="auth-field">
-              <label htmlFor="otp">Enter OTP</label>
+              <label>Full Name</label>
+              <input type="text" value={name} readOnly />
+            </div>
+
+            <div className="auth-field">
+              <label htmlFor="otp">OTP</label>
               <input
                 id="otp"
                 type="text"
@@ -114,7 +110,7 @@ export default function Register() {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="Enter your password"
+                placeholder="Create a password"
               />
             </div>
 
@@ -129,7 +125,7 @@ export default function Register() {
               />
             </div>
 
-            <button className="auth-button" onClick={handleCompleteRegistration}>
+            <button className="auth-button" onClick={handleRegister}>
               Complete Registration
             </button>
           </>
@@ -139,7 +135,7 @@ export default function Register() {
           Already have an account? <a href="/login">Login</a>
         </p>
       </div>
-      <ToastContainer />  {/* Add ToastContainer here to render notifications */}
+      <ToastContainer />
     </div>
   );
 }
