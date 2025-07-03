@@ -1084,7 +1084,7 @@ export async function addProgram(payload) {
     formData.append('title', payload.title);
     formData.append('description', payload.description);
     formData.append('photo', payload.photo);
-    const { data } = await apiClient.post('/program/add', formData);
+    const { data } = await apiClient.post('/program/add/', formData);
     return data;
   } catch (err) {
     throw err.response?.data || err;
