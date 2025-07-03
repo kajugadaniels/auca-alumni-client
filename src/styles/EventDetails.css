@@ -1,0 +1,43 @@
+.event-details-container {
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 0 16px;
+}
+
+.back-button {
+  margin-bottom: 16px;
+  background: none;
+  border: none;
+  color: #0066cc;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.event-details-card {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+}
+
+.event-details-image {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.event-details-info {
+  padding: 20px 24px;
+}
+
+.event-details-date,
+.event-details-status,
+.event-details-meta {
+  margin-bottom: 8px;
+  font-size: 15px;
+}
+
+.event-details-description {
+  margin: 12px 0 20px;
+  line-height: 1.55;
+}
