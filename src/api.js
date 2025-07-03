@@ -1066,7 +1066,7 @@ export async function fetchPrograms(params = {}) {
  */
 export async function fetchProgramDetail(programId) {
   try {
-    const { data } = await apiClient.get(`/programs/${programId}`);
+    const { data } = await apiClient.get(`/programs/${programId}/`);
     return data;
   } catch (err) {
     throw err.response?.data || err;
@@ -1105,7 +1105,7 @@ export async function updateProgram(programId, payload) {
     if (payload.photo) {
       formData.append('photo', payload.photo);
     }
-    const { data } = await apiClient.put(`/program/${programId}/update`, formData);
+    const { data } = await apiClient.put(`/program/${programId}/update/`, formData);
     return data;
   } catch (err) {
     throw err.response?.data || err;
@@ -1119,7 +1119,7 @@ export async function updateProgram(programId, payload) {
  */
 export async function deleteProgram(programId) {
   try {
-    const { data } = await apiClient.delete(`/program/${programId}/delete`);
+    const { data } = await apiClient.delete(`/program/${programId}/delete/`);
     return data;
   } catch (err) {
     throw err.response?.data || err;
