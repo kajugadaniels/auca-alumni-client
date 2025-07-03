@@ -5,9 +5,9 @@ import {
 } from '../api';
 import '../styles/Event.css';
 
-import EventFormModal from '../components/pages/events/EventFormModal';
-import EventDetailModal from '../components/pages/events/EventDetailModal';
-import ConfirmDeleteModal from '../components/pages/events/ConfirmDeleteModal';
+import EventFormModal from "../components/pages/events/EventFormModal.jsx";
+import EventDetailModal from "../components/pages/events/EventDetailModal.jsx";
+import ConfirmDeleteModal from "../components/pages/events/ConfirmDeleteModal.jsx";
 
 const dummyImage = 'https://www.testo.com/images/not-available.jpg';
 
