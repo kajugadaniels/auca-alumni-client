@@ -1,0 +1,49 @@
+/* ProgramForm.css  – visually consistent with Event/News forms */
+
+.program-form-container {
+  max-width: 600px;
+  margin: 40px auto;
+  padding: 24px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.program-form-title {
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.program-form-field {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 18px;
+}
+
+.program-form-field label {
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+
+.program-form-field input,
+.program-form-field textarea {
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.btn-primary {
+  width: 100%;
+  padding: 12px;
+  font-weight: 600;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  background: #0066cc;
+  color: #fff;
+}
+
+.btn-primary:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
