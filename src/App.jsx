@@ -76,6 +76,10 @@ function App() {
 
               {/* misc */}
               <Route path="/news" element={<News />} />
+              <Route path="/news/add" element={<AddNews />} />
+              <Route path="/news/:id" element={<NewsDetails />} />
+              <Route path="/news/:id/edit" element={<EditNews />} />
+
               <Route path="/mentorship" element={<Mentorship />} />
               <Route path="/jobs" element={<JobBoard />} />
               <Route path="/forums" element={<Forums />} />
