@@ -108,6 +108,53 @@ export async function logoutUser() {
 }
 
 /**
+ * Update current user's profile data (JSON only, no photo).
+ * @param {{
+ *   email?: string,
+ *   phone_number?: string,
+ *   bio?: string,
+ *   address?: string,
+ *   current_employer?: string,
+ *   self_employed?: string,
+ *   latest_education_level?: string,
+ *   profession_id?: number,
+ *   dob?: string,
+ *   start_date?: string,
+ *   end_date?: string,
+ *   faculty_id?: number,
+ *   country_id?: string,
+ *   department?: string,
+ *   gender?: boolean,
+ *   status?: string
+ * }} payload
+ * @returns {Promise<import('axios').AxiosResponse>}
+ */
+export async function updateProfile(payload) {
+  try {
+    const { data } = await apiClient.put('/auth/profile', payload);
+    return data;
+  } catch (err) {
+    throw err.response?.data || err;
+  }
+}
+
+/**
+ * Upload or replace current user's profile photo.
+ * @param {File} photoFile
+ * @returns {Promise<import('axios').AxiosResponse>}
+ */
+export async function updateProfilePhoto(photoFile) {
+  try {
+    const formData = new FormData();
+    formData.append('photo', photoFile);
+    const { data } = await apiClient.put('/auth/profile/photo', formData);
+    return data;
+  } catch (err) {
+    throw err.response?.data || err;
+  }
+}
+
+/**
  * Fetch paginated list of certifications.
  * @param {{ page?: number, page_size?: number, search?: string }} params
  * @returns {Promise<import('axios').AxiosResponse>}
