@@ -107,7 +107,7 @@ const Events = () => {
       <div
         style={{ marginBottom: 20, display: "flex", justifyContent: "space-between" }}
       >
-        <button className="btn-primary" onClick={() => navigate("/events/add")}>
+        <button className="event-link" onClick={() => navigate("/events/add")}>
           Add New Event
         </button>
 
