@@ -30,6 +30,9 @@ import NotFound from "./pages/NotFound";
 import AddEvent from "./components/pages/events/AddEvent";
 import EventDetails from "./components/pages/events/EventDetails";
 import EditEvent from "./components/pages/events/EditEvent";
+import AddNews from "./components/pages/news/AddNews";
+import NewsDetails from "./components/pages/news/NewsDetails";
+import EditNews from "./components/pages/news/EditNews";
 
 function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
