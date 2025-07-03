@@ -1,186 +1,157 @@
 import { useState, useEffect } from 'react';
-import {
-  fetchEvents,
-  fetchEventDetail,
-} from '../api';
+import { fetchEvents } from '../api';  // Import the fetchEvents function
 import '../styles/Event.css';
 
-import EventFormModal from '../components/pages/events/EventFormModal.jsx';
-import EventDetailModal from '../components/pages/events/EventDetailModal.jsx';
-import ConfirmDeleteModal from '../components/pages/events/ConfirmDeleteModal.jsx';
+const dummyImage = "https://www.testo.com/images/not-available.jpg";
 
-const dummyImage = 'https://www.testo.com/images/not-available.jpg';
-
-export default function Events() {
-  /* ─────────────────────────────────── State */
+const Events = () => {
   const [events, setEvents] = useState([]);
-  const [total, setTotal] = useState(0);
+  const [totalEvents, setTotalEvents] = useState(0);
   const [page, setPage] = useState(1);
-  const pageSize = 5;
-
+  const [pageSize, setPageSize] = useState(5);
   const [search, setSearch] = useState('');
   const [sortBy, setSortBy] = useState('date');
   const [order, setOrder] = useState('asc');
-
-  const [loading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
   const [noResults, setNoResults] = useState(false);
 
-  /* modal state */
-  const [showForm, setShowForm] = useState(false);
-  const [editTarget, setEditTarget] = useState(null);
-  const [showDetail, setShowDetail] = useState(false);
-  const [detailTarget, setDetailTarget] = useState(null);
-  const [deleteTarget, setDeleteTarget] = useState(null);
+  // Function to fetch events with pagination, search, and sorting
+  const getEvents = async () => {
+    setIsLoading(true);
+    setNoResults(false);
+    
+    const params = {
+      page,
+      page_size: pageSize,
+      search,
+      sort_by: sortBy,
+      order,
+    };
 
-  /* ─────────────────────────────────── Fetch */
-  const load = async () => {
-    setLoading(true);
-    const params = { page, page_size: pageSize, search, sort_by: sortBy, order };
     try {
-      const { items, total } = await fetchEvents(params);
-      setNoResults(!items.length);
-      setEvents(items);
-      setTotal(total);
+      const data = await fetchEvents(params);
+      if (data.items.length === 0) {
+        setNoResults(true);
+      }
+      setEvents(data.items);
+      setTotalEvents(data.total);
+    } catch (error) {
+      setNoResults(true);  // Show no results if API call fails
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
-  useEffect(() => { load(); }, [page, search, sortBy, order]);
+  useEffect(() => {
+    getEvents();  // Fetch events whenever page, search, or other params change
+  }, [page, search, sortBy, order, pageSize]);
 
-  /* ─────────────────────────────────── Helpers */
-  const pages = Math.max(1, Math.ceil(total / pageSize));
-
-  const openAdd = () => { setEditTarget(null); setShowForm(true); };
-  const openEdit = async ({ id }) => {
-    // fetch full record so the detail modal can show the live photo
-    const data = await fetchEventDetail(id);
-    setEditTarget({
-      id: data.id,
-      date: data.date,
-      description: data.description,
-      photoUrl: data.photo,    // for preview only
-    });
-    setShowForm(true);
-  };
-  const openDetail = async id => {
-    const data = await fetchEventDetail(id);
-    setDetailTarget(data);
-    setShowDetail(true);
+  // Handle page change
+  const handlePageChange = (newPage) => {
+    setPage(newPage);
   };
 
-  /* ─────────────────────────────────── UI */
+  // Handle search input change
+  const handleSearchChange = (e) => {
+    setSearch(e.target.value);
+    setPage(1);  // Reset to first page on search change
+  };
+
+  // Handle sorting change
+  const handleSortChange = (e) => {
+    const [newSortBy, newOrder] = e.target.value.split('_');
+    setSortBy(newSortBy);
+    setOrder(newOrder);
+    setPage(1);  // Reset to first page on sort change
+  };
+
+  // Handle image error (fallback to dummy image)
+  const handleImageError = (e) => {
+    e.target.src = dummyImage;  // Set fallback image if the original image fails
+  };
+
   return (
     <div className="event-container">
       <h1 className="event-title">Upcoming Alumni Events</h1>
-      <p className="event-subtitle">
-        Stay connected and engaged with our AUCA alumni community.
-      </p>
+      <p className="event-subtitle">Stay connected and engaged with our AUCA alumni network.</p>
 
-      {/* floating add-button */}
-      <button className="fab-add" onClick={openAdd} title="Add new event">
-        +
-      </button>
-
-      {/* toolbar */}
-      <div className="event-toolbar">
+      {/* Search Box */}
+      <div className="event-search">
         <input
           type="text"
-          placeholder="Search events…"
+          placeholder="Search for events..."
           value={search}
-          onChange={e => { setSearch(e.target.value); setPage(1); }}
+          onChange={handleSearchChange}
           className="event-search-input"
         />
-        <select
-          value={`${sortBy}_${order}`}
-          onChange={e => {
-            const [s, o] = e.target.value.split('_');
-            setSortBy(s); setOrder(o); setPage(1);
-          }}
-          className="event-sort-select"
-        >
-          <option value="date_asc">Date ↑</option>
-          <option value="date_desc">Date ↓</option>
-          <option value="title_asc">Title A-Z</option>
-          <option value="title_desc">Title Z-A</option>
+      </div>
+
+      {/* Sorting Options */}
+      <div className="event-sort">
+        <label htmlFor="sort" className="event-sort-label">
+          Sort By:
+        </label>
+        <select id="sort" onChange={handleSortChange} className="event-sort-select">
+          <option value="date_asc">Date (Oldest to Newest)</option>
+          <option value="date_desc">Date (Newest to Oldest)</option>
+          <option value="title_asc">Title (A-Z)</option>
+          <option value="title_desc">Title (Z-A)</option>
         </select>
       </div>
 
-      {loading ? (
-        <p>Loading events…</p>
-      ) : noResults ? (
-        <p>No events found.</p>
-      ) : (
-        <div className="event-list">
-          {events.map(ev => (
-            <div key={ev.id} className="event-card">
-              <img
-                src={ev.photo || dummyImage}
-                alt={ev.description}
-                className="event-image"
-                onError={e => (e.target.src = dummyImage)}
+      {/* Event List */}
+      <div className="event-list">
+        {isLoading ? (
+          <p>Loading events...</p>
+        ) : noResults ? (
+          <p>No events found. Please try a different search or check back later.</p>
+        ) : (
+          events.map((event) => (
+            <div key={event.id} className="event-card">
+              <img 
+                src={event.photo} 
+                alt={event.title} 
+                className="event-image" 
+                onError={handleImageError}  // Trigger fallback on error
               />
               <div className="event-details">
-                <h3
-                  className="event-card-title clickable"
-                  onClick={() => openDetail(ev.id)}
-                >
-                  {ev.description.slice(0, 60)}
-                </h3>
-                <p className="event-card-date">{ev.date}</p>
-                <p className="event-card-description">
-                  {ev.description.slice(0, 120)}…
-                </p>
-                <div className="card-actions">
-                  <button className="btn-secondary tiny" onClick={() => openDetail(ev.id)}>View</button>
-                  <button className="btn-secondary tiny" onClick={() => openEdit(ev)}>Edit</button>
-                  <button className="btn-primary   tiny" onClick={() => setDeleteTarget(ev.id)}>Delete</button>
-                </div>
+                <h3 className="event-card-title">{event.title}</h3>
+                <p className="event-card-date">{event.date}</p>
+                <p className="event-card-location">{event.location}</p>
+                <p className="event-card-description">{event.description}</p>
+                <a href={event.link} target="_blank" rel="noopener noreferrer" className="event-link">
+                  Learn More
+                </a>
               </div>
             </div>
-          ))}
-        </div>
-      )}
+          ))
+        )}
+      </div>
 
-      {/* pagination */}
-      {pages > 1 && (
+      {/* Pagination */}
+      {totalEvents > pageSize && (
         <div className="event-pagination">
           <button
+            onClick={() => handlePageChange(page - 1)}
             disabled={page === 1}
-            onClick={() => setPage(p => p - 1)}
             className="pagination-button"
           >
-            ‹ Prev
+            Previous
           </button>
-          <span>Page {page} / {pages}</span>
+          <span className="pagination-page">
+            Page {page} of {Math.ceil(totalEvents / pageSize)}
+          </span>
           <button
-            disabled={page === pages}
-            onClick={() => setPage(p => p + 1)}
+            onClick={() => handlePageChange(page + 1)}
+            disabled={page * pageSize >= totalEvents}
             className="pagination-button"
           >
-            Next ›
+            Next
           </button>
         </div>
       )}
-
-      {/* ──────────────────────── Modals */}
-      <EventFormModal
-        isOpen={showForm}
-        onClose={() => setShowForm(false)}
-        initial={editTarget}
-        onSuccess={load}
-      />
-      <EventDetailModal
-        isOpen={showDetail}
-        onClose={() => setShowDetail(false)}
-        event={detailTarget}
-      />
-      <ConfirmDeleteModal
-        isOpen={Boolean(deleteTarget)}
-        onClose={() => setDeleteTarget(null)}
-        eventId={deleteTarget}
-        onSuccess={load}
-      />
     </div>
   );
-}
+};
+
+export default Events;
