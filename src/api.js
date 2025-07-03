@@ -1397,3 +1397,30 @@ export async function deleteWorkExperience(experienceId) {
     throw err.response?.data || err;
   }
 }
+
+/**
+* Fetch **all** discussion messages (latest first, no pagination).
+* @returns {Promise<{ total: number, items: Array<{ id:number,user_id:number,message:string,created_at:string }> }>}
+*/
+export async function fetchDiscussions() {
+ try {
+   const { data } = await apiClient.get("/discussions/");
+   return data;
+ } catch (err) {
+   throw err.response?.data || err;
+ }
+}
+
+/**
+* Send a new discussion message on behalf of the current user.
+* @param {string} message
+* @returns {Promise<{ id:number,user_id:number,message:string,created_at:string }>}
+*/
+export async function sendDiscussionMessage(message) {
+ try {
+   const { data } = await apiClient.post("/discussions/send", { message });
+   return data;
+ } catch (err) {
+   throw err.response?.data || err;
+ }
+}
