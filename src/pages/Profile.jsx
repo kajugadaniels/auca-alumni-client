@@ -1,57 +1,140 @@
 import React, { useState, useEffect } from 'react';
 import '../styles/Profile.css';
-import { FaLinkedin, FaGithub, FaTwitter, FaSun, FaMoon } from 'react-icons/fa';
+import {
+  FaLinkedin,
+  FaGithub,
+  FaTwitter,
+  FaSun,
+  FaMoon,
+  FaSave,
+  FaEdit,
+} from 'react-icons/fa';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+
+import { verifyToken, updateProfile, updateProfilePhoto } from '../api';
+
+const DEFAULT_AVATAR = 'https://www.testo.com/images/not-available.jpg';
 
 export default function Profile() {
   const [editing, setEditing] = useState(false);
   const [theme, setTheme] = useState('light');
   const [profile, setProfile] = useState({
-    name: "Irakoze",
-    title: "Software Engineer",
-    email: "jane.doe@example.com",
-    phone: "+250 788 123 456",
-    location: "Kigali, Rwanda",
-    company: "RagaTech250",
-    position: "Full Stack Developer",
-    linkedin: "https://linkedin.com/in/janedoe",
-    university: "AUCA",
-    graduation: "2020",
-    degree: "BSc in Computer Science",
-    bio: "Passionate developer with a love for building impactful solutions. Open to mentorship, networking, and opportunities to give back to AUCA.",
-    skills: "React, Node.js, Docker, Flutter, Community Building"
+    first_name: '',
+    last_name: '',
+    email: '',
+    phone_number: '',
+    bio: '',
+    current_employer: '',
+    self_employed: '',
+    latest_education_level: '',
+    address: '',
+    profession_id: '',
+    dob: '',
+    start_date: '',
+    end_date: '',
+    faculty_id: '',
+    country_id: '',
+    department: '',
+    gender: true,
+    status: '',
   });
-  const [avatar, setAvatar] = useState('profile.jpg');
+  const [avatarUrl, setAvatarUrl] = useState(DEFAULT_AVATAR);
+  const [avatarFile, setAvatarFile] = useState(null);
 
+  // Fetch current user on mount
   useEffect(() => {
     document.body.className = theme;
   }, [theme]);
 
-  const handleEdit = () => {
+  useEffect(() => {
+    (async () => {
+      try {
+        const { user } = await verifyToken();
+        setProfile({
+          first_name: user.first_name,
+          last_name: user.last_name,
+          email: user.email,
+          phone_number: user.phone_number,
+          bio: user.personal_information?.bio || '',
+          current_employer: user.personal_information?.current_employer || '',
+          self_employed: user.personal_information?.self_employed || '',
+          latest_education_level:
+            user.personal_information?.latest_education_level || '',
+          address: user.personal_information?.address || '',
+          profession_id: user.personal_information?.profession_id || '',
+          dob: user.personal_information?.dob || '',
+          start_date: user.personal_information?.start_date || '',
+          end_date: user.personal_information?.end_date || '',
+          faculty_id: user.personal_information?.faculty_id || '',
+          country_id: user.personal_information?.country_id || '',
+          department: user.personal_information?.department || '',
+          gender: user.personal_information?.gender ?? true,
+          status: user.personal_information?.status || '',
+        });
+        setAvatarUrl(user.personal_information?.photo || DEFAULT_AVATAR);
+      } catch (err) {
+        toast.error('Failed to load profile.');
+      }
+    })();
+  }, []);
+
+  const handleEditToggle = () => {
     if (editing) {
-      toast.success("Profile updated successfully!");
+      handleSave();
     }
     setEditing(!editing);
   };
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setProfile(prev => ({ ...prev, [name]: value }));
+  const handleChange = e => {
+    const { name, value, type, checked } = e.target;
+    setProfile(prev => ({
+      ...prev,
+      [name]: type === 'checkbox' ? checked : value,
+    }));
   };
 
   const handleThemeToggle = () => {
     setTheme(prev => (prev === 'light' ? 'dark' : 'light'));
   };
 
-  const handleAvatarChange = (e) => {
+  const handleAvatarChange = e => {
     const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setAvatar(reader.result);
-      };
-      reader.readAsDataURL(file);
+    if (!file) return;
+    setAvatarFile(file);
+    const reader = new FileReader();
+    reader.onloadend = () => setAvatarUrl(reader.result);
+    reader.readAsDataURL(file);
+  };
+
+  const handleSave = async () => {
+    try {
+      // 1) Update JSON fields
+      await updateProfile({
+        email: profile.email,
+        phone_number: profile.phone_number,
+        bio: profile.bio,
+        current_employer: profile.current_employer,
+        self_employed: profile.self_employed,
+        latest_education_level: profile.latest_education_level,
+        address: profile.address,
+        profession_id: profile.profession_id,
+        dob: profile.dob,
+        start_date: profile.start_date,
+        end_date: profile.end_date,
+        faculty_id: profile.faculty_id,
+        country_id: profile.country_id,
+        department: profile.department,
+        gender: profile.gender,
+        status: profile.status,
+      });
+      // 2) If avatar changed, upload it
+      if (avatarFile) {
+        await updateProfilePhoto(avatarFile);
+      }
+      toast.success('Profile updated successfully!');
+    } catch (err) {
+      toast.error(err.message || 'Update failed.');
     }
   };
 
@@ -65,7 +148,12 @@ export default function Profile() {
       <div className="profile-card">
         <div className="profile-header">
           <label htmlFor="avatar-upload">
-            <img src={avatar} alt="Profile" className="profile-avatar" />
+            <img
+              src={avatarUrl}
+              alt="Profile"
+              className="profile-avatar"
+              onError={() => setAvatarUrl(DEFAULT_AVATAR)}
+            />
           </label>
           {editing && (
             <input
@@ -77,106 +165,112 @@ export default function Profile() {
             />
           )}
           <div className="profile-basic-info">
-            {editing ? (
-              <>
-                <input name="name" value={profile.name} onChange={handleChange} />
-                <input name="title" value={profile.title} onChange={handleChange} />
-              </>
-            ) : (
-              <>
-                <h2>{profile.name}</h2>
-                <p>{profile.title}</p>
-                <p>Class of {profile.graduation}, Computer Science</p>
-              </>
-            )}
+            <div className="field-group">
+              <label>First Name</label>
+              <input
+                name="first_name"
+                value={profile.first_name}
+                disabled
+              />
+            </div>
+            <div className="field-group">
+              <label>Last Name</label>
+              <input
+                name="last_name"
+                value={profile.last_name}
+                disabled
+              />
+            </div>
           </div>
         </div>
 
         <div className="profile-section">
           <h3>Contact Info</h3>
-          {editing ? (
-            <>
-              <input name="email" value={profile.email} onChange={handleChange} />
-              <input name="phone" value={profile.phone} onChange={handleChange} />
-              <input name="location" value={profile.location} onChange={handleChange} />
-            </>
-          ) : (
-            <>
-              <p><strong>Email:</strong> {profile.email}</p>
-              <p><strong>Phone:</strong> {profile.phone}</p>
-              <p><strong>Location:</strong> {profile.location}</p>
-            </>
-          )}
+          <div className="field-group">
+            <label>Email</label>
+            <input
+              name="email"
+              value={profile.email}
+              onChange={handleChange}
+              disabled={!editing}
+            />
+          </div>
+          <div className="field-group">
+            <label>Phone</label>
+            <input
+              name="phone_number"
+              value={profile.phone_number}
+              onChange={handleChange}
+              disabled={!editing}
+            />
+          </div>
+          <div className="field-group">
+            <label>Address</label>
+            <input
+              name="address"
+              value={profile.address}
+              onChange={handleChange}
+              disabled={!editing}
+            />
+          </div>
         </div>
 
         <div className="profile-section">
-          <h3>Career Info</h3>
-          {editing ? (
-            <>
-              <input name="company" value={profile.company} onChange={handleChange} />
-              <input name="position" value={profile.position} onChange={handleChange} />
-              <input name="linkedin" value={profile.linkedin} onChange={handleChange} />
-            </>
-          ) : (
-            <>
-              <p><strong>Company:</strong> {profile.company}</p>
-              <p><strong>Position:</strong> {profile.position}</p>
-              <p><strong>LinkedIn:</strong> <a href={profile.linkedin} target="_blank" rel="noopener noreferrer">{profile.linkedin}</a></p>
-              <div className="social-icons">
-                <a href={profile.linkedin}><FaLinkedin /></a>
-                <a href="#"><FaGithub /></a>
-                <a href="#"><FaTwitter /></a>
-              </div>
-            </>
-          )}
+          <h3>Professional Info</h3>
+          <div className="field-group">
+            <label>Current Employer</label>
+            <input
+              name="current_employer"
+              value={profile.current_employer}
+              onChange={handleChange}
+              disabled={!editing}
+            />
+          </div>
+          <div className="field-group">
+            <label>Self-Employed</label>
+            <input
+              name="self_employed"
+              value={profile.self_employed}
+              onChange={handleChange}
+              disabled={!editing}
+            />
+          </div>
+          <div className="field-group">
+            <label>Education Level</label>
+            <input
+              name="latest_education_level"
+              value={profile.latest_education_level}
+              onChange={handleChange}
+              disabled={!editing}
+            />
+          </div>
         </div>
 
         <div className="profile-section">
-          <h3>Education</h3>
-          {editing ? (
-            <>
-              <input name="degree" value={profile.degree} onChange={handleChange} />
-              <input name="graduation" value={profile.graduation} onChange={handleChange} />
-              <input name="university" value={profile.university} onChange={handleChange} />
-            </>
-          ) : (
-            <>
-              <p><strong>Degree:</strong> {profile.degree}</p>
-              <p><strong>Graduation:</strong> {profile.graduation}</p>
-              <p><strong>University:</strong> {profile.university}</p>
-            </>
-          )}
-        </div>
-
-        <div className="profile-section">
-          <h3>Bio</h3>
-          {editing ? (
-            <textarea name="bio" value={profile.bio} onChange={handleChange} />
-          ) : (
-            <p>{profile.bio}</p>
-          )}
-        </div>
-
-        <div className="profile-section">
-          <h3>Skills & Interests</h3>
-          {editing ? (
-            <input name="skills" value={profile.skills} onChange={handleChange} />
-          ) : (
-            <p>{profile.skills}</p>
-          )}
-        </div>
-
-        <div className="profile-section">
-          <h3>Account Activity</h3>
-          <p>Last Login: April 28, 2025</p>
-          <p>IP Address: 196.15.67.102</p>
+          <h3>About Me</h3>
+          <textarea
+            name="bio"
+            value={profile.bio}
+            onChange={handleChange}
+            disabled={!editing}
+          />
         </div>
 
         <div className="profile-actions">
-          <button className="edit-profile-btn" onClick={handleEdit}>
-            {editing ? 'Save Changes' : 'Edit Profile'}
+          <button
+            className="edit-profile-btn"
+            onClick={handleEditToggle}
+          >
+            {editing ? (
+              <>
+                <FaSave /> Save Changes
+              </>
+            ) : (
+              <>
+                <FaEdit /> Edit Profile
+              </>
+            )}
           </button>
-          <button className="delete-profile-btn">Delete Account</button>
         </div>
       </div>
     </div>
