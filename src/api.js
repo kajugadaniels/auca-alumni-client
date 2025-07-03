@@ -82,7 +82,35 @@ export async function completeRegistration(payload) {
 
 /**
  * Verify user access token – confirms validity and fetches user info.
- * @returns {Promise<{ status: string, message: string, user: object }>}
+ * @returns {Promise<{
+ *   status: string;
+ *   message: string;
+ *   user: {
+ *     id: number;
+ *     email: string;
+ *     student_id: number;
+ *     first_name: string;
+ *     last_name: string;
+ *     phone_number: string;
+ *     personal_information: {
+ *       photo?: string;
+ *       bio: string;
+ *       current_employer?: string;
+ *       self_employed?: string;
+ *       latest_education_level?: string;
+ *       address: string;
+ *       profession_id?: number;
+ *       dob?: string;
+ *       start_date?: string;
+ *       end_date?: string;
+ *       faculty_id?: number;
+ *       country_id?: string;
+ *       department?: string;
+ *       gender: boolean;
+ *       status?: string;
+ *     } | null;
+ *   };
+ * }>} 
  */
 export async function verifyToken() {
   try {
