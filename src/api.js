@@ -1066,7 +1066,7 @@ export async function fetchPrograms(params = {}) {
  */
 export async function fetchProgramDetail(programId) {
   try {
-    const { data } = await apiClient.get(`/programs/${programId}/`);
+    const { data } = await apiClient.get(`/program/${programId}/`);
     return data;
   } catch (err) {
     throw err.response?.data || err;

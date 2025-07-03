@@ -57,7 +57,12 @@ const AddProgram = () => {
     /* ---------- ui ---------- */
     return (
         <div className="program-form-container">
-            <h2 className="program-form-title">Add Mentorship Program</h2>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <h2 className="program-form-title">Add Mentorship Program</h2>
+                <button className="back-button" onClick={() => navigate("/mentorship")}>
+                    ← Back to Programs
+                </button>
+            </div>
 
             <form className="program-form" onSubmit={handleSubmit}>
                 {/* title */}

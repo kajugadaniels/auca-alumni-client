@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
-import { fetchProgramDetail, updateProgram } from "../api";
-import "../styles/ProgramForm.css";
+import { fetchProgramDetail, updateProgram } from "../../../api";
+import "../../../styles/ProgramForm.css";
 
 const EditProgram = () => {
     const { id } = useParams();
@@ -64,7 +64,7 @@ const EditProgram = () => {
             setSubmitting(true);
             await updateProgram(id, form); // PUT /program/{id}/update/
             toast.success("Program updated!");
-            navigate("/programs");
+            navigate("/mentorship");
         } catch (err) {
             const msg =
                 err?.detail?.message || err?.message || "Failed to update program.";
@@ -79,7 +79,12 @@ const EditProgram = () => {
 
     return (
         <div className="program-form-container">
-            <h2 className="program-form-title">Edit Mentorship Program</h2>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <h2 className="program-form-title">Edit Mentorship Program</h2>
+                <button className="back-button" onClick={() => navigate("/mentorship")}>
+                    ← Back to Programs
+                </button>
+            </div>
 
             <form className="program-form" onSubmit={handleSubmit}>
                 {/* TITLE */}

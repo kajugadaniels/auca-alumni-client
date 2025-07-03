@@ -20,7 +20,7 @@ const ProgramDetails = () => {
                 setProgram(data);
             } catch (_) {
                 toast.error("Unable to load program details.");
-                navigate("/programs");
+                navigate("/mentorship");
             } finally {
                 setLoading(false);
             }
@@ -35,7 +35,7 @@ const ProgramDetails = () => {
     /* ---------- render ---------- */
     return (
         <div className="program-details-container">
-            <button className="back-button" onClick={() => navigate("/programs")}>
+            <button className="back-button" onClick={() => navigate("/mentorship")}>
                 ← Back to Programs
             </button>
 
