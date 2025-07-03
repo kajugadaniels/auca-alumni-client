@@ -5,17 +5,18 @@ import {
 } from '../api';
 import '../styles/Event.css';
 
-import EventFormModal from "../components/pages/events/EventFormModal.jsx";
-import EventDetailModal from "../components/pages/events/EventDetailModal.jsx";
-import ConfirmDeleteModal from "../components/pages/events/ConfirmDeleteModal.jsx";
+import EventFormModal from '../components/pages/events/EventFormModal.jsx';
+import EventDetailModal from '../components/pages/events/EventDetailModal.jsx';
+import ConfirmDeleteModal from '../components/pages/events/ConfirmDeleteModal.jsx';
 
 const dummyImage = 'https://www.testo.com/images/not-available.jpg';
 
 export default function Events() {
+  /* ─────────────────────────────────── State */
   const [events, setEvents] = useState([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
-  const [pageSize] = useState(5);
+  const pageSize = 5;
 
   const [search, setSearch] = useState('');
   const [sortBy, setSortBy] = useState('date');
@@ -24,92 +25,77 @@ export default function Events() {
   const [loading, setLoading] = useState(true);
   const [noResults, setNoResults] = useState(false);
 
-  // modal states
+  /* modal state */
   const [showForm, setShowForm] = useState(false);
   const [editTarget, setEditTarget] = useState(null);
   const [showDetail, setShowDetail] = useState(false);
   const [detailTarget, setDetailTarget] = useState(null);
   const [deleteTarget, setDeleteTarget] = useState(null);
 
-  const getEvents = async () => {
+  /* ─────────────────────────────────── Fetch */
+  const load = async () => {
     setLoading(true);
-    const params = {
-      page,
-      page_size: pageSize,
-      search,
-      sort_by: sortBy,
-      order,
-    };
+    const params = { page, page_size: pageSize, search, sort_by: sortBy, order };
     try {
-      const data = await fetchEvents(params);
-      setNoResults(!data.items.length);
-      setEvents(data.items);
-      setTotal(data.total);
-    } catch {
-      setNoResults(true);
+      const { items, total } = await fetchEvents(params);
+      setNoResults(!items.length);
+      setEvents(items);
+      setTotal(total);
     } finally {
       setLoading(false);
     }
   };
 
-  useEffect(() => {
-    getEvents();
-  }, [page, search, sortBy, order]);
+  useEffect(() => { load(); }, [page, search, sortBy, order]);
 
-  const openAdd = () => {
-    setEditTarget(null);
-    setShowForm(true);
-  };
+  /* ─────────────────────────────────── Helpers */
+  const pages = Math.max(1, Math.ceil(total / pageSize));
 
-  const openEdit = ev => {
+  const openAdd = () => { setEditTarget(null); setShowForm(true); };
+  const openEdit = async ({ id }) => {
+    // fetch full record so the detail modal can show the live photo
+    const data = await fetchEventDetail(id);
     setEditTarget({
-      id: ev.id,
-      date: ev.date,
-      description: ev.description,
+      id: data.id,
+      date: data.date,
+      description: data.description,
+      photoUrl: data.photo,    // for preview only
     });
     setShowForm(true);
   };
-
   const openDetail = async id => {
-    try {
-      const data = await fetchEventDetail(id);
-      setDetailTarget(data);
-      setShowDetail(true);
-    } catch (e) {
-      alert(e.message || 'Could not load details.');
-    }
+    const data = await fetchEventDetail(id);
+    setDetailTarget(data);
+    setShowDetail(true);
   };
 
-  // UI helpers
-  const pages = Math.ceil(total / pageSize) || 1;
-
+  /* ─────────────────────────────────── UI */
   return (
     <div className="event-container">
       <h1 className="event-title">Upcoming Alumni Events</h1>
       <p className="event-subtitle">
-        Stay connected and engaged with our AUCA alumni network.
+        Stay connected and engaged with our AUCA alumni community.
       </p>
 
+      {/* floating add-button */}
+      <button className="fab-add" onClick={openAdd} title="Add new event">
+        +
+      </button>
+
+      {/* toolbar */}
       <div className="event-toolbar">
-        <button className="btn-primary" onClick={openAdd}>
-          + Add Event
-        </button>
         <input
           type="text"
           placeholder="Search events…"
           value={search}
-          onChange={e => {
-            setSearch(e.target.value);
-            setPage(1);
-          }}
+          onChange={e => { setSearch(e.target.value); setPage(1); }}
           className="event-search-input"
         />
         <select
+          value={`${sortBy}_${order}`}
           onChange={e => {
             const [s, o] = e.target.value.split('_');
-            setSortBy(s);
-            setOrder(o);
-            setPage(1);
+            setSortBy(s); setOrder(o); setPage(1);
           }}
           className="event-sort-select"
         >
@@ -130,7 +116,7 @@ export default function Events() {
             <div key={ev.id} className="event-card">
               <img
                 src={ev.photo || dummyImage}
-                alt={ev.title}
+                alt={ev.description}
                 className="event-image"
                 onError={e => (e.target.src = dummyImage)}
               />
@@ -139,31 +125,16 @@ export default function Events() {
                   className="event-card-title clickable"
                   onClick={() => openDetail(ev.id)}
                 >
-                  {ev.title || ev.description.slice(0, 40)}
+                  {ev.description.slice(0, 60)}
                 </h3>
                 <p className="event-card-date">{ev.date}</p>
                 <p className="event-card-description">
-                  {ev.description.slice(0, 100)}…
+                  {ev.description.slice(0, 120)}…
                 </p>
                 <div className="card-actions">
-                  <button
-                    className="btn-secondary tiny"
-                    onClick={() => openDetail(ev.id)}
-                  >
-                    Learn More
-                  </button>
-                  <button
-                    className="btn-secondary tiny"
-                    onClick={() => openEdit(ev)}
-                  >
-                    Edit
-                  </button>
-                  <button
-                    className="btn-primary tiny"
-                    onClick={() => setDeleteTarget(ev.id)}
-                  >
-                    Delete
-                  </button>
+                  <button className="btn-secondary tiny" onClick={() => openDetail(ev.id)}>View</button>
+                  <button className="btn-secondary tiny" onClick={() => openEdit(ev)}>Edit</button>
+                  <button className="btn-primary   tiny" onClick={() => setDeleteTarget(ev.id)}>Delete</button>
                 </div>
               </div>
             </div>
@@ -171,22 +142,20 @@ export default function Events() {
         </div>
       )}
 
-      {/* Pagination */}
+      {/* pagination */}
       {pages > 1 && (
         <div className="event-pagination">
           <button
-            onClick={() => setPage(p => Math.max(1, p - 1))}
             disabled={page === 1}
+            onClick={() => setPage(p => p - 1)}
             className="pagination-button"
           >
             ‹ Prev
           </button>
-          <span>
-            Page {page} / {pages}
-          </span>
+          <span>Page {page} / {pages}</span>
           <button
-            onClick={() => setPage(p => Math.min(pages, p + 1))}
             disabled={page === pages}
+            onClick={() => setPage(p => p + 1)}
             className="pagination-button"
           >
             Next ›
@@ -194,12 +163,12 @@ export default function Events() {
         </div>
       )}
 
-      {/* Modals */}
+      {/* ──────────────────────── Modals */}
       <EventFormModal
         isOpen={showForm}
         onClose={() => setShowForm(false)}
         initial={editTarget}
-        onSuccess={getEvents}
+        onSuccess={load}
       />
       <EventDetailModal
         isOpen={showDetail}
@@ -210,7 +179,7 @@ export default function Events() {
         isOpen={Boolean(deleteTarget)}
         onClose={() => setDeleteTarget(null)}
         eventId={deleteTarget}
-        onSuccess={getEvents}
+        onSuccess={load}
       />
     </div>
   );
