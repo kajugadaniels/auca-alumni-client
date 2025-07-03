@@ -33,6 +33,9 @@ import EditEvent from "./components/pages/events/EditEvent";
 import AddNews from "./components/pages/news/AddNews";
 import NewsDetails from "./components/pages/news/NewsDetails";
 import EditNews from "./components/pages/news/EditNews";
+import AddProgram from "./components/pages/programs/AddProgram";
+import EditProgram from "./components/pages/programs/EditProgram";
+import ProgramDetails from "./components/pages/programs/ProgramDetails";
 
 function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -84,6 +87,10 @@ function App() {
               <Route path="/news/:id/edit" element={<EditNews />} />
 
               <Route path="/mentorship" element={<Mentorship />} />
+              <Route path="/mentorship/add" element={<AddProgram />} />
+              <Route path="/mentorship/:id" element={<EditProgram />} />
+              <Route path="/mentorship/:id/edit" element={<ProgramDetails />} />
+
               <Route path="/jobs" element={<JobBoard />} />
               <Route path="/forums" element={<Forums />} />
               <Route path="/donate" element={<Donation />} />
