@@ -1424,3 +1424,60 @@ export async function sendDiscussionMessage(message) {
    throw err.response?.data || err;
  }
 }
+
+/* -------------------------------------------------------------------
+   DONATIONS
+------------------------------------------------------------------- */
+
+/**
+ * Fetch paginated list of donations (latest first).
+ * @param {{ page?: number, page_size?: number }} params
+ * @returns {Promise<{
+ *   total: number,
+ *   page: number,
+ *   page_size: number,
+ *   next_page: string | null,
+ *   prev_page: string | null,
+ *   items: Array<{
+ *     id: number,
+ *     user_id: number,
+ *     name: string,
+ *     email: string,
+ *     amount: string,
+ *     message?: string,
+ *     created_at: string,
+ *     updated_at: string
+ *   }>
+ * }>}
+ */
+export async function fetchDonations(params = {}) {
+  try {
+    const { data } = await apiClient.get("/donations/", { params });
+    return data;
+  } catch (err) {
+    throw err.response?.data || err;
+  }
+}
+
+/**
+ * Create a new donation. `user_id` is derived server-side.
+ * @param {{ name: string, email: string, amount: number|string, message?: string }} payload
+ * @returns {Promise<{
+ *   id: number,
+ *   user_id: number,
+ *   name: string,
+ *   email: string,
+ *   amount: string,
+ *   message?: string,
+ *   created_at: string,
+ *   updated_at: string
+ * }>}
+ */
+export async function addDonation(payload) {
+  try {
+    const { data } = await apiClient.post("/donations/add", payload);
+    return data;
+  } catch (err) {
+    throw err.response?.data || err;
+  }
+}
