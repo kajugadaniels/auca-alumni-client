@@ -80,6 +80,8 @@ const EditEvent = () => {
         }
     };
 
+    const today = new Date().toISOString().split("T")[0];
+
     /* ---------- render ---------- */
     if (loading) return <p style={{ textAlign: "center" }}>Loading event…</p>;
 

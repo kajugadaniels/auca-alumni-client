@@ -61,6 +61,8 @@ const AddEvent = () => {
         }
     };
 
+    const today = new Date().toISOString().split("T")[0];
+
     /* ---------- render ---------- */
     return (
         <div className="event-form-container">
