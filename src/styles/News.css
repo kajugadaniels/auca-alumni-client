@@ -1,122 +1,143 @@
 /* News.css */
+
+/* ---------- Section Wrapper / Container ---------- */
 .news-section {
-    padding: 3rem 2rem;
-    background-color: #f9f9f9;
-    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  }
-  
-  .news-title {
-    text-align: center;
-    color: #002147;
-    font-size: 2.5rem;
-    margin-bottom: 2rem;
-  }
-  
+  padding: 3rem 2rem;
+  background-color: #f9f9f9;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+
+  /* NEW: center the content */
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* ---------- Headline ---------- */
+.news-title {
+  text-align: center;
+  color: #002147;
+  font-size: 2.5rem;
+  margin-bottom: 2rem;
+}
+
+/* ---------- Grid Layout ---------- */
+.news-grid {
+  display: grid;
+  /* NEW: exactly 3 columns on wide screens */
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+}
+
+/* ---------- Card ---------- */
+.news-card {
+  background-color: #fff;
+  border-radius: 1rem;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.news-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+.news-image {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+}
+
+.news-content {
+  padding: 1.5rem;
+}
+
+.news-content h2 {
+  color: #002147;
+  margin-bottom: 0.5rem;
+  font-size: 1.4rem;
+}
+
+.news-date {
+  font-size: 0.85rem;
+  color: #888;
+  margin-bottom: 0.75rem;
+}
+
+.news-summary {
+  color: #333;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+/* ---------- Action Links ---------- */
+.news-link {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #002f6c;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 5px;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.news-link:hover {
+  background-color: #004a7c;
+}
+
+/* ---------- Responsive Breakpoints ---------- */
+@media screen and (max-width: 1024px) {
   .news-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 2rem;
+    /* 2 columns on tablets */
+    grid-template-columns: repeat(2, 1fr);
   }
-  
-  .news-card {
-    background-color: white;
-    border-radius: 1rem;
-    overflow: hidden;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-  }
-  
-  .news-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-  }
-  
-  .news-image {
-    width: 100%;
-    height: 180px;
-    object-fit: cover;
-  }
-  
-  .news-content {
-    padding: 1.5rem;
-  }
-  
-  .news-content h2 {
-    color: #002147;
-    margin-bottom: 0.5rem;
-    font-size: 1.4rem;
-  }
-  
-  .news-date {
-    font-size: 0.85rem;
-    color: #888;
-    margin-bottom: 0.75rem;
-  }
-  
-  .news-summary {
-    color: #333;
-    font-size: 1rem;
-    line-height: 1.5;
+}
+
+@media screen and (max-width: 768px) {
+  .news-section {
+    padding: 2rem 1rem;
   }
 
-  /* Learn More Link */
-  .news-link {
-    display: inline-block;
-    padding: 10px 20px;
-    background-color: #002f6c;
-    color: white;
-    text-decoration: none;
-    border-radius: 5px;
-    font-weight: bold;
-    transition: background-color 0.3s ease;
+  .news-title {
+    font-size: 2rem;
   }
-  
-  .news-link:hover {
-    background-color: #004a7c;
+
+  .news-grid {
+    gap: 1.5rem;
   }
-  
-  /* Responsive Design */
-  @media screen and (max-width: 768px) {
-    .news-section {
-      padding: 2rem 1rem;
-    }
-  
-    .news-title {
-      font-size: 2rem;
-    }
-  
-    .news-grid {
-      gap: 1.5rem;
-    }
-  
-    .news-content {
-      padding: 1rem;
-    }
-  
-    .news-content h2 {
-      font-size: 1.2rem;
-    }
-  
-    .news-summary {
-      font-size: 0.95rem;
-    }
+
+  .news-content {
+    padding: 1rem;
   }
-  
-  @media screen and (max-width: 480px) {
-    .news-title {
-      font-size: 1.8rem;
-    }
-  
-    .news-content h2 {
-      font-size: 1rem;
-    }
-  
-    .news-summary {
-      font-size: 0.9rem;
-    }
-  
-    .news-image {
-      height: 150px;
-    }
+
+  .news-content h2 {
+    font-size: 1.2rem;
   }
-  
+
+  .news-summary {
+    font-size: 0.95rem;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .news-grid {
+    /* Single column on phones */
+    grid-template-columns: 1fr;
+  }
+
+  .news-title {
+    font-size: 1.8rem;
+  }
+
+  .news-content h2 {
+    font-size: 1rem;
+  }
+
+  .news-summary {
+    font-size: 0.9rem;
+  }
+
+  .news-image {
+    height: 150px;
+  }
+}
