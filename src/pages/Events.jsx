@@ -1,92 +1,117 @@
-import { useState, useEffect } from 'react';
-import { fetchEvents } from '../api';  // Import the fetchEvents function
-import '../styles/Event.css';
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import { confirmAlert } from "react-confirm-alert";
+import "react-confirm-alert/src/react-confirm-alert.css";
+
+import { fetchEvents, deleteEvent } from "../api";
+import "../styles/Event.css";
 
 const dummyImage = "https://www.testo.com/images/not-available.jpg";
 
 const Events = () => {
   const navigate = useNavigate();
+
+  // ───────── state ─────────
   const [events, setEvents] = useState([]);
   const [totalEvents, setTotalEvents] = useState(0);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(5);
-  const [search, setSearch] = useState('');
-  const [sortBy, setSortBy] = useState('date');
-  const [order, setOrder] = useState('asc');
+  const [search, setSearch] = useState("");
+  const [sortBy, setSortBy] = useState("date");
+  const [order, setOrder] = useState("asc");
   const [isLoading, setIsLoading] = useState(true);
   const [noResults, setNoResults] = useState(false);
 
-  // Function to fetch events with pagination, search, and sorting
+  /* ---------- fetch list ---------- */
   const getEvents = async () => {
     setIsLoading(true);
     setNoResults(false);
 
-    const params = {
-      page,
-      page_size: pageSize,
-      search,
-      sort_by: sortBy,
-      order,
-    };
+    const params = { page, page_size: pageSize, search, sort_by: sortBy, order };
 
     try {
       const data = await fetchEvents(params);
-      if (data.items.length === 0) {
-        setNoResults(true);
-      }
+      if (data.items.length === 0) setNoResults(true);
       setEvents(data.items);
       setTotalEvents(data.total);
-    } catch (error) {
-      setNoResults(true);  // Show no results if API call fails
+    } catch (_) {
+      setNoResults(true);
     } finally {
       setIsLoading(false);
     }
   };
 
   useEffect(() => {
-    getEvents();  // Fetch events whenever page, search, or other params change
+    getEvents();
   }, [page, search, sortBy, order, pageSize]);
 
-  // Handle page change
-  const handlePageChange = (newPage) => {
-    setPage(newPage);
-  };
+  /* ---------- handlers ---------- */
+  const handlePageChange = (newPage) => setPage(newPage);
 
-  // Handle search input change
   const handleSearchChange = (e) => {
     setSearch(e.target.value);
-    setPage(1);  // Reset to first page on search change
+    setPage(1);
   };
 
-  // Handle sorting change
   const handleSortChange = (e) => {
-    const [newSortBy, newOrder] = e.target.value.split('_');
+    const [newSortBy, newOrder] = e.target.value.split("_");
     setSortBy(newSortBy);
     setOrder(newOrder);
-    setPage(1);  // Reset to first page on sort change
+    setPage(1);
   };
 
-  // Handle image error (fallback to dummy image)
   const handleImageError = (e) => {
-    e.target.src = dummyImage;  // Set fallback image if the original image fails
+    e.target.src = dummyImage;
   };
 
+  /* --- NEW: delete with confirmation --- */
+  const handleDelete = (id) => {
+    confirmAlert({
+      title: "Delete Event",
+      message: "Are you sure you want to permanently delete this event?",
+      buttons: [
+        {
+          label: "Yes, Delete",
+          onClick: async () => {
+            try {
+              await deleteEvent(id);
+              toast.success("Event deleted.");
+              // refresh current page – if last item removed, go back a page
+              if (events.length === 1 && page > 1) {
+                setPage(page - 1);
+              } else {
+                getEvents();
+              }
+            } catch (err) {
+              const msg =
+                err?.detail?.message || err?.message || "Failed to delete event.";
+              toast.error(msg);
+            }
+          },
+        },
+        { label: "Cancel" },
+      ],
+    });
+  };
+
+  /* ---------- render ---------- */
   return (
     <div className="event-container">
       <h1 className="event-title">Upcoming Alumni Events</h1>
-      <p className="event-subtitle">Stay connected and engaged with our AUCA alumni network.</p>
+      <p className="event-subtitle">
+        Stay connected and engaged with our AUCA alumni network.
+      </p>
 
-
-      <div style={{ marginBottom: '20px', display: 'flex', justifyContent: 'space-between' }}>
-        <button
-          className='btn-primary'
-          onClick={() => navigate('/events/add')}
-        >
+      {/* toolbar */}
+      <div
+        style={{ marginBottom: 20, display: "flex", justifyContent: "space-between" }}
+      >
+        <button className="btn-primary" onClick={() => navigate("/events/add")}>
           Add New Event
         </button>
 
-        {/* Search Box */}
+        {/* Search */}
         <div className="event-search">
           <input
             type="text"
@@ -97,61 +122,53 @@ const Events = () => {
           />
         </div>
 
-        {/* Sorting Options */}
+        {/* Sort */}
         <div className="event-sort">
           <label htmlFor="sort" className="event-sort-label">
             Sort By:
           </label>
           <select id="sort" onChange={handleSortChange} className="event-sort-select">
-            <option value="date_asc">Date (Oldest to Newest)</option>
-            <option value="date_desc">Date (Newest to Oldest)</option>
-            <option value="title_asc">Title (A-Z)</option>
-            <option value="title_desc">Title (Z-A)</option>
+            <option value="date_asc">Date (Oldest → Newest)</option>
+            <option value="date_desc">Date (Newest → Oldest)</option>
+            <option value="description_asc">Description (A-Z)</option>
+            <option value="description_desc">Description (Z-A)</option>
           </select>
         </div>
       </div>
 
-      {/* Event List */}
+      {/* list */}
       <div className="event-list">
         {isLoading ? (
-          <p>Loading events...</p>
+          <p>Loading events…</p>
         ) : noResults ? (
           <p>No events found. Please try a different search or check back later.</p>
         ) : (
-          events.map((event) => (
-            <div key={event.id} className="event-card">
+          events.map((ev) => (
+            <div key={ev.id} className="event-card">
               <img
-                src={event.photo}
-                alt={event.title}
+                src={ev.photo}
+                alt={ev.description}
                 className="event-image"
-                onError={handleImageError}  // Trigger fallback on error
+                onError={handleImageError}
               />
+
               <div className="event-details">
-                <h3 className="event-card-title">{event.title}</h3>
-                <p className="event-card-date">{event.date}</p>
-                <p className="event-card-location">{event.location}</p>
-                <p className="event-card-description">{event.description}</p>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '10px' }}>
-                  {/* 2️⃣ VIEW DETAILS */}
-                  <Link
-                    to={`/events/${event.id}`}
-                    className="event-link"
-                  >
+                <h3 className="event-card-title">{ev.description.slice(0, 60)}…</h3>
+                <p className="event-card-date">{ev.date}</p>
+                <p className="event-card-description">{ev.description}</p>
+
+                <div
+                  style={{ display: "flex", justifyContent: "space-between", marginTop: 10 }}
+                >
+                  <Link to={`/events/${ev.id}`} className="event-link">
                     Learn More
                   </Link>
-
-                  {/* 3️⃣ EDIT */}
-                  <Link
-                    to={`/events/${event.id}/edit`}
-                    className="event-link"
-                  >
+                  <Link to={`/events/${ev.id}/edit`} className="event-link">
                     Edit
                   </Link>
-
-                  {/* (optional) Delete stays as API call button */}
                   <button
                     className="event-link"
-                    onClick={() => console.log("TODO: delete handler")}
+                    onClick={() => handleDelete(ev.id)}
                   >
                     Delete
                   </button>
@@ -162,7 +179,7 @@ const Events = () => {
         )}
       </div>
 
-      {/* Pagination */}
+      {/* pagination */}
       {totalEvents > pageSize && (
         <div className="event-pagination">
           <button
