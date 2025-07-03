@@ -148,12 +148,18 @@ export default function Events() {
                 <div className="card-actions">
                   <button
                     className="btn-secondary tiny"
+                    onClick={() => openDetail(ev.id)}
+                  >
+                    Learn More
+                  </button>
+                  <button
+                    className="btn-secondary tiny"
                     onClick={() => openEdit(ev)}
                   >
                     Edit
                   </button>
                   <button
-                    className="btn-danger tiny"
+                    className="btn-primary tiny"
                     onClick={() => setDeleteTarget(ev.id)}
                   >
                     Delete
