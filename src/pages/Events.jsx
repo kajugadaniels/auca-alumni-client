@@ -119,9 +119,17 @@ const Events = () => {
                 <p className="event-card-date">{event.date}</p>
                 <p className="event-card-location">{event.location}</p>
                 <p className="event-card-description">{event.description}</p>
-                <a href={event.link} target="_blank" rel="noopener noreferrer" className="event-link">
-                  Learn More
-                </a>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '10px' }}>
+                  <a href={event.link} target="_blank" rel="noopener noreferrer" className="event-link">
+                    Learn More
+                  </a>
+                  <a href={event.link} target="_blank" rel="noopener noreferrer" className="event-link">
+                    Edit
+                  </a>
+                  <a href={event.link} target="_blank" rel="noopener noreferrer" className="event-link">
+                    Delete
+                  </a>
+                </div>
               </div>
             </div>
           ))
