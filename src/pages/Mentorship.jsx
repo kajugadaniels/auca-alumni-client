@@ -103,7 +103,7 @@ const Mentorship = () => {
       <div
         style={{ marginBottom: 20, display: "flex", justifyContent: "space-between" }}
       >
-        <button className="btn-primary" onClick={() => navigate("/programs/add")}>
+        <button className="program-link" onClick={() => navigate("/programs/add")}>
           Add Program
         </button>
 

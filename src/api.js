@@ -1084,7 +1084,7 @@ export async function addProgram(payload) {
     formData.append('title', payload.title);
     formData.append('description', payload.description);
     formData.append('photo', payload.photo);
-    const { data } = await apiClient.post('/programs/add', formData);
+    const { data } = await apiClient.post('/program/add', formData);
     return data;
   } catch (err) {
     throw err.response?.data || err;
@@ -1105,7 +1105,7 @@ export async function updateProgram(programId, payload) {
     if (payload.photo) {
       formData.append('photo', payload.photo);
     }
-    const { data } = await apiClient.put(`/programs/${programId}/update`, formData);
+    const { data } = await apiClient.put(`/program/${programId}/update`, formData);
     return data;
   } catch (err) {
     throw err.response?.data || err;
@@ -1119,7 +1119,7 @@ export async function updateProgram(programId, payload) {
  */
 export async function deleteProgram(programId) {
   try {
-    const { data } = await apiClient.delete(`/programs/${programId}/delete`);
+    const { data } = await apiClient.delete(`/program/${programId}/delete`);
     return data;
   } catch (err) {
     throw err.response?.data || err;
