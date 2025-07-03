@@ -1,0 +1,77 @@
+/* OpportunityForm.css */
+
+.opp-form-container {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 3rem 1.5rem;
+  background: #fff;
+  border-radius: 1rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.opp-form-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.opp-form-header h2 {
+  margin: 0;
+  color: #002147;
+}
+
+.back-button {
+  background: transparent;
+  border: none;
+  color: #004a7c;
+  cursor: pointer;
+  font-size: 0.95rem;
+}
+
+.opp-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.opp-form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.opp-form-field label {
+  font-weight: 600;
+  color: #002147;
+}
+
+.opp-form-field input,
+.opp-form-field textarea {
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-family: inherit;
+}
+
+.opp-form-field textarea {
+  resize: vertical;
+}
+
+.btn-primary {
+  padding: 12px 18px;
+  background: #002f6c;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  max-width: 200px;
+  align-self: flex-end;
+}
+
+.btn-primary:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
