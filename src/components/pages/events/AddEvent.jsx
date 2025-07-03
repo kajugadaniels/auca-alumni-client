@@ -64,7 +64,12 @@ const AddEvent = () => {
     /* ---------- render ---------- */
     return (
         <div className="event-form-container">
-            <h2 className="event-form-title">Add New Event</h2>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <h2 className="event-form-title">Add New Event</h2>
+                <button className="back-button" onClick={() => navigate("/events")}>
+                    ← Back to Events
+                </button>
+            </div>
 
             <form className="event-form" onSubmit={handleSubmit}>
                 {/* DATE ------------------------------------------------ */}
@@ -76,6 +81,7 @@ const AddEvent = () => {
                         name="event_date"
                         value={form.event_date}
                         onChange={handleChange}
+                        min={today}                 /* 🆕  block past days */
                         required
                     />
                 </div>
