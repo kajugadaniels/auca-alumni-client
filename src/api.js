@@ -635,7 +635,7 @@ export async function addNews(payload) {
     formData.append('date', payload.date);
     formData.append('description', payload.description);
     formData.append('photo', payload.photo);
-    const { data } = await apiClient.post('/news/add', formData);
+    const { data } = await apiClient.post('/news/add/', formData);
     return data;
   } catch (err) {
     throw err.response?.data || err;
