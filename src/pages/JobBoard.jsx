@@ -96,7 +96,7 @@ const JobBoard = () => {
       {/* toolbar */}
       <div className="jobboard-toolbar">
         <button
-          className="btn-primary"
+          className="job-link"
           onClick={() => navigate("/opportunities/add")}
         >
           Post Opportunity
