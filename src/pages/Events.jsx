@@ -1,38 +1,50 @@
-import React, { useState, useEffect } from 'react';
-import { fetchEvents } from '../api';
-import AddEventModal from '../components/pages/events/AddEventModal';
-import EditEventModal from '../components/pages/events/EditEventModal';
-import ViewEventModal from '../components/pages/events/ViewEventModal';
-import DeleteEventModal from '../components/pages/events/DeleteEventModal';
+import { useState, useEffect } from 'react';
+import {
+  fetchEvents,
+  fetchEventDetail,
+} from '../api';
 import '../styles/Event.css';
 
-const dummyImage = "https://www.testo.com/images/not-available.jpg";
+import EventFormModal from '../components/pages/events/EventFormModal';
+import EventDetailModal from '../components/pages/events/EventDetailModal';
+import ConfirmDeleteModal from '../components/pages/events/ConfirmDeleteModal';
+
+const dummyImage = 'https://www.testo.com/images/not-available.jpg';
 
 export default function Events() {
   const [events, setEvents] = useState([]);
-  const [totalEvents, setTotalEvents] = useState(0);
+  const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
   const [pageSize] = useState(5);
+
   const [search, setSearch] = useState('');
   const [sortBy, setSortBy] = useState('date');
   const [order, setOrder] = useState('asc');
+
   const [loading, setLoading] = useState(true);
   const [noResults, setNoResults] = useState(false);
 
-  const [showAdd, setShowAdd] = useState(false);
-  const [showEdit, setShowEdit] = useState(false);
-  const [showView, setShowView] = useState(false);
-  const [showDelete, setShowDelete] = useState(false);
-  const [selectedEvent, setSelectedEvent] = useState(null);
+  // modal states
+  const [showForm, setShowForm] = useState(false);
+  const [editTarget, setEditTarget] = useState(null);
+  const [showDetail, setShowDetail] = useState(false);
+  const [detailTarget, setDetailTarget] = useState(null);
+  const [deleteTarget, setDeleteTarget] = useState(null);
 
   const getEvents = async () => {
     setLoading(true);
-    setNoResults(false);
+    const params = {
+      page,
+      page_size: pageSize,
+      search,
+      sort_by: sortBy,
+      order,
+    };
     try {
-      const data = await fetchEvents({ page, page_size: pageSize, search, sort_by: sortBy, order });
-      if (!data.items.length) setNoResults(true);
+      const data = await fetchEvents(params);
+      setNoResults(!data.items.length);
       setEvents(data.items);
-      setTotalEvents(data.total);
+      setTotal(data.total);
     } catch {
       setNoResults(true);
     } finally {
@@ -40,47 +52,63 @@ export default function Events() {
     }
   };
 
-  useEffect(() => { getEvents(); }, [page, search, sortBy, order]);
-
-  const handleImageError = e => { e.target.src = dummyImage; };
-
-  const openModal = (modal, event = null) => {
-    setSelectedEvent(event);
-    if (modal === 'add') setShowAdd(true);
-    if (modal === 'edit') setShowEdit(true);
-    if (modal === 'view') setShowView(true);
-    if (modal === 'delete') setShowDelete(true);
-  };
-  const closeAll = () => {
-    setShowAdd(false);
-    setShowEdit(false);
-    setShowView(false);
-    setShowDelete(false);
-    setSelectedEvent(null);
+  useEffect(() => {
     getEvents();
+  }, [page, search, sortBy, order]);
+
+  const openAdd = () => {
+    setEditTarget(null);
+    setShowForm(true);
   };
+
+  const openEdit = ev => {
+    setEditTarget({
+      id: ev.id,
+      date: ev.date,
+      description: ev.description,
+    });
+    setShowForm(true);
+  };
+
+  const openDetail = async id => {
+    try {
+      const data = await fetchEventDetail(id);
+      setDetailTarget(data);
+      setShowDetail(true);
+    } catch (e) {
+      alert(e.message || 'Could not load details.');
+    }
+  };
+
+  // UI helpers
+  const pages = Math.ceil(total / pageSize) || 1;
 
   return (
     <div className="event-container">
       <h1 className="event-title">Upcoming Alumni Events</h1>
-      <p className="event-subtitle">Stay connected and engaged with our AUCA alumni network.</p>
+      <p className="event-subtitle">
+        Stay connected and engaged with our AUCA alumni network.
+      </p>
 
       <div className="event-toolbar">
-        <button className="btn btn-primary" onClick={() => openModal('add')}>
+        <button className="btn-primary" onClick={openAdd}>
           + Add Event
         </button>
         <input
           type="text"
-          placeholder="Search events..."
+          placeholder="Search events…"
           value={search}
-          onChange={e => { setSearch(e.target.value); setPage(1); }}
+          onChange={e => {
+            setSearch(e.target.value);
+            setPage(1);
+          }}
           className="event-search-input"
         />
         <select
           onChange={e => {
-            const [newSort, newOrder] = e.target.value.split('_');
-            setSortBy(newSort);
-            setOrder(newOrder);
+            const [s, o] = e.target.value.split('_');
+            setSortBy(s);
+            setOrder(o);
             setPage(1);
           }}
           className="event-sort-select"
@@ -93,7 +121,7 @@ export default function Events() {
       </div>
 
       {loading ? (
-        <p>Loading events...</p>
+        <p>Loading events…</p>
       ) : noResults ? (
         <p>No events found.</p>
       ) : (
@@ -104,15 +132,32 @@ export default function Events() {
                 src={ev.photo || dummyImage}
                 alt={ev.title}
                 className="event-image"
-                onError={handleImageError}
+                onError={e => (e.target.src = dummyImage)}
               />
               <div className="event-details">
-                <h3>{ev.title}</h3>
-                <p>{ev.date}</p>
-                <div className="event-actions">
-                  <button onClick={() => openModal('view', ev)}>View</button>
-                  <button onClick={() => openModal('edit', ev)}>Edit</button>
-                  <button onClick={() => openModal('delete', ev)}>Delete</button>
+                <h3
+                  className="event-card-title clickable"
+                  onClick={() => openDetail(ev.id)}
+                >
+                  {ev.title || ev.description.slice(0, 40)}
+                </h3>
+                <p className="event-card-date">{ev.date}</p>
+                <p className="event-card-description">
+                  {ev.description.slice(0, 100)}…
+                </p>
+                <div className="card-actions">
+                  <button
+                    className="btn-secondary tiny"
+                    onClick={() => openEdit(ev)}
+                  >
+                    Edit
+                  </button>
+                  <button
+                    className="btn-danger tiny"
+                    onClick={() => setDeleteTarget(ev.id)}
+                  >
+                    Delete
+                  </button>
                 </div>
               </div>
             </div>
@@ -120,27 +165,47 @@ export default function Events() {
         </div>
       )}
 
-      {totalEvents > pageSize && (
+      {/* Pagination */}
+      {pages > 1 && (
         <div className="event-pagination">
-          <button onClick={() => setPage(p => p - 1)} disabled={page === 1}>Prev</button>
-          <span>Page {page} of {Math.ceil(totalEvents / pageSize)}</span>
           <button
-            onClick={() => setPage(p => p + 1)}
-            disabled={page * pageSize >= totalEvents}
+            onClick={() => setPage(p => Math.max(1, p - 1))}
+            disabled={page === 1}
+            className="pagination-button"
           >
-            Next
+            ‹ Prev
+          </button>
+          <span>
+            Page {page} / {pages}
+          </span>
+          <button
+            onClick={() => setPage(p => Math.min(pages, p + 1))}
+            disabled={page === pages}
+            className="pagination-button"
+          >
+            Next ›
           </button>
         </div>
       )}
 
-      <AddEventModal isOpen={showAdd} onClose={closeAll} />
-      {selectedEvent && (
-        <>
-          <EditEventModal isOpen={showEdit} onClose={closeAll} event={selectedEvent} />
-          <ViewEventModal isOpen={showView} onClose={closeAll} event={selectedEvent} />
-          <DeleteEventModal isOpen={showDelete} onClose={closeAll} event={selectedEvent} />
-        </>
-      )}
+      {/* Modals */}
+      <EventFormModal
+        isOpen={showForm}
+        onClose={() => setShowForm(false)}
+        initial={editTarget}
+        onSuccess={getEvents}
+      />
+      <EventDetailModal
+        isOpen={showDetail}
+        onClose={() => setShowDetail(false)}
+        event={detailTarget}
+      />
+      <ConfirmDeleteModal
+        isOpen={Boolean(deleteTarget)}
+        onClose={() => setDeleteTarget(null)}
+        eventId={deleteTarget}
+        onSuccess={getEvents}
+      />
     </div>
   );
 }
