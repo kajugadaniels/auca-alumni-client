@@ -398,7 +398,7 @@ export async function fetchEventDetail(eventId) {
 export async function addEvent(payload) {
   try {
     const formData = new FormData();
-    formData.append('event_date', payload.event_date);
+    formData.append('event_date', payload.event_date ?? payload.date);
     formData.append('description', payload.description);
     formData.append('photo', payload.photo);
     const { data } = await apiClient.post('/event/add', formData);
@@ -417,7 +417,7 @@ export async function addEvent(payload) {
 export async function updateEvent(eventId, payload) {
   try {
     const formData = new FormData();
-    formData.append('event_date', payload.event_date);
+    formData.append('event_date', payload.event_date ?? payload.date);
     formData.append('description', payload.description);
     if (payload.photo) {
       formData.append('photo', payload.photo);
