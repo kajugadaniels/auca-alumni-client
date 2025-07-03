@@ -44,7 +44,7 @@ const AddProgram = () => {
             setSubmitting(true);
             await addProgram(form);           // POST /program/add/
             toast.success("Program created!");
-            navigate("/programs");            // back to list (update route if different)
+            navigate("/mentorship");            // back to list (update route if different)
         } catch (err) {
             const msg =
                 err?.detail?.message || err?.message || "Failed to create program.";
