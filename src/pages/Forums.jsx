@@ -1,111 +1,112 @@
-import React, { useState, useRef, useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
+import { toast } from "react-toastify";
+
+import {
+  fetchDiscussions,
+  sendDiscussionMessage,
+  verifyToken,              // existing helper
+} from "../api";
+
 import "../styles/Forums.css";
+
+const POLL_INTERVAL_MS = 5000; // 5-second refresh
 
 const Forums = () => {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
-  const [editText, setEditText] = useState("");
+  const [currentUser, setCurrentUser] = useState(null);
   const messagesEndRef = useRef(null);
 
-  const users = [
-    { id: 1, name: "Alice", role: "Teacher", avatar: "https://i.pravatar.cc/150?img=1" },
-    { id: 2, name: "Bob", role: "Student", avatar: "https://i.pravatar.cc/150?img=2" },
-    { id: 3, name: "Charlie", role: "Alumni", avatar: "https://i.pravatar.cc/150?img=3" },
-  ];
-
-  useEffect(() => {
+  /* ---------- helper: scroll to bottom ---------- */
+  const scrollToBottom = () =>
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
 
-  const handleSendMessage = () => {
-    if (newMessage.trim() !== "") {
-      const randomUser = users[Math.floor(Math.random() * users.length)];
-      const message = {
-        id: Date.now(),
-        text: newMessage,
-        sender: randomUser.name,
-        role: randomUser.role,
-        avatar: randomUser.avatar,
-        timestamp: new Date().toLocaleTimeString(),
-        isEditing: false,
-      };
-      setMessages([message, ...messages]);
+  /* ---------- load current user ---------- */
+  useEffect(() => {
+    const loadUser = async () => {
+      try {
+        const { user } = await verifyToken();
+        setCurrentUser(user); // { id, first_name, last_name, ... }
+      } catch (_) {
+        toast.error("Unable to verify user – please log in again.");
+      }
+    };
+    loadUser();
+  }, []);
+
+  /* ---------- poll for new messages ---------- */
+  useEffect(() => {
+    let loop;
+
+    const loadMessages = async () => {
+      try {
+        const data = await fetchDiscussions(); // { total, items }
+        setMessages(data.items);               // already newest → oldest
+      } catch (_) {
+        toast.error("Failed to load messages.");
+      }
+    };
+
+    // initial fetch
+    loadMessages();
+
+    // polling loop
+    loop = setInterval(loadMessages, POLL_INTERVAL_MS);
+
+    return () => clearInterval(loop);
+  }, []);
+
+  /* ---------- auto-scroll on change ---------- */
+  useEffect(scrollToBottom, [messages]);
+
+  /* ---------- send message ---------- */
+  const handleSendMessage = async () => {
+    if (newMessage.trim() === "") return;
+
+    try {
+      const sent = await sendDiscussionMessage(newMessage.trim());
+      // optimistic append (backend returns the new row)
+      setMessages((prev) => [sent, ...prev]);
       setNewMessage("");
+    } catch (err) {
+      toast.error(
+        err?.response?.data?.message || "Failed to send message."
+      );
     }
   };
 
-  const handleDelete = (id) => {
-    setMessages(messages.filter((msg) => msg.id !== id));
-  };
-
-  const handleEdit = (id, text) => {
-    setMessages(messages.map((msg) => msg.id === id ? { ...msg, isEditing: true } : msg));
-    setEditText(text);
-  };
-
-  const handleCancelEdit = (id) => {
-    setMessages(messages.map((msg) => msg.id === id ? { ...msg, isEditing: false } : msg));
-    setEditText("");
-  };
-
-  const handleSaveEdit = (id) => {
-    setMessages(messages.map((msg) =>
-      msg.id === id ? { ...msg, text: editText, isEditing: false } : msg
-    ));
-    setEditText("");
-  };
-
+  /* ---------- render ---------- */
   return (
     <div className="forum-container">
       <div className="forum-header">
-        <h1>Group Chat</h1>
-        <p>Connect with group members and share ideas!</p>
+        <h1>Mentorship Discussion</h1>
+        <p>Connect with mentors and peers in real-time!</p>
       </div>
 
       <div className="messages-container">
         <div className="chat-room">
           <h2>Group Chat</h2>
           {messages.length === 0 ? (
-            <p>No messages yet...</p>
+            <p>No messages yet…</p>
           ) : (
-            messages.map((message) => (
-              <div
-                key={message.id}
-                className={`message ${message.sender === "You" ? "sent" : "received"}`}
-              >
-                <div className="message-header">
-                  <img className="avatar" src={message.avatar} alt={message.sender} />
-                  <div>
-                    <span className="message-sender">{message.sender}</span>
-                    <span className={`message-role ${message.role}`}>{message.role}</span>
+            messages
+              .slice()                 // copy for stable reverse
+              .reverse()               // oldest → newest for display
+              .map((m) => {
+                const isMe = m.user_id === currentUser?.id;
+                const dt = new Date(m.created_at).toLocaleString();
+                return (
+                  <div
+                    key={m.id}
+                    className={`message ${isMe ? "sent" : "received"}`}
+                  >
+                    <div className="message-content">
+                      <p>{m.message}</p>
+                    </div>
+                    <span className="message-timestamp">{dt}</span>
                   </div>
-                </div>
-
-                <div className="message-content">
-                  {message.isEditing ? (
-                    <>
-                      <textarea
-                        rows="2"
-                        value={editText}
-                        onChange={(e) => setEditText(e.target.value)}
-                        style={{ width: "100%", marginBottom: "8px" }}
-                      />
-                      <button onClick={() => handleSaveEdit(message.id)}>💾 Save</button>
-                      <button onClick={() => handleCancelEdit(message.id)}>✖ Cancel</button>
-                    </>
-                  ) : (
-                    <>
-                      <p>{message.text}</p>
-                      <div style={{ marginTop: "8px" }}>
-                        <button onClick={() => handleEdit(message.id, message.text)}>✏ Edit</button>
-                        <button onClick={() => handleDelete(message.id)}>🗑 Delete</button>
-                      </div>
-                    </>
-                  )}
-                </div>
-                <span className="message-timestamp">{message.timestamp}</span>
-              </div>
-            ))
+                );
+              })
           )}
           <div ref={messagesEndRef} />
         </div>
@@ -114,9 +115,10 @@ const Forums = () => {
       <div className="message-input">
         <input
           type="text"
-          placeholder="Type a message..."
+          placeholder="Type a message…"
           value={newMessage}
           onChange={(e) => setNewMessage(e.target.value)}
+          onKeyDown={(e) => e.key === "Enter" && handleSendMessage()}
         />
         <button onClick={handleSendMessage}>Send</button>
       </div>
