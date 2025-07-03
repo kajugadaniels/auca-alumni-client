@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { addNews } from "../../../api";
-import "../../../styles/NewsForm.css";           // optional – style as you like
+import { addNews } from "../../../api";              // helper already in your api.js
+import "../../../styles/NewsForm.css";               // shares style with EventForm
 
 const AddNews = () => {
   const navigate = useNavigate();
@@ -28,17 +28,13 @@ const AddNews = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    /* client-side validation */
+    // basic validation
     if (form.title.trim().length < 5) {
       toast.error("Title must be at least 5 characters.");
       return;
     }
     if (!form.date) {
       toast.error("Please choose a date.");
-      return;
-    }
-    if (new Date(form.date) > new Date()) {
-      toast.error("News date cannot be in the future.");
       return;
     }
     if (form.description.trim().length < 10) {
@@ -52,12 +48,12 @@ const AddNews = () => {
 
     try {
       setSubmitting(true);
-      await addNews(form);          // POST /news/add (FormData handled inside)
-      toast.success("News item created successfully!");
+      await addNews(form);              // POST /news/add
+      toast.success("News item created!");
       navigate("/news");
     } catch (err) {
       const msg =
-        err?.detail?.message || err?.message || "Failed to create the news item.";
+        err?.detail?.message || err?.message || "Failed to create news item.";
       toast.error(msg);
     } finally {
       setSubmitting(false);
@@ -77,10 +73,11 @@ const AddNews = () => {
             type="text"
             id="title"
             name="title"
+            minLength={5}
+            placeholder="Enter news headline"
             value={form.title}
             onChange={handleChange}
             required
-            minLength={5}
           />
         </div>
 
@@ -104,16 +101,17 @@ const AddNews = () => {
             id="description"
             name="description"
             rows="4"
+            minLength={10}
+            placeholder="Brief description of the news item"
             value={form.description}
             onChange={handleChange}
             required
-            minLength={10}
           />
         </div>
 
         {/* PHOTO ----------------------------------------------- */}
         <div className="news-form-field">
-          <label htmlFor="photo">News Image</label>
+          <label htmlFor="photo">Image</label>
           <input
             type="file"
             id="photo"
