@@ -24,6 +24,9 @@ import LearningCenter from './pages/LearningCenter';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import NotFound from './pages/NotFound';
+import AddEvent from './components/pages/events/AddEvent';
+import EventDetails from './components/pages/events/EventDetails';
+import EditEvent from './components/pages/events/EditEvent';
 
 function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -46,16 +49,21 @@ function App() {
       <div className="flex h-screen bg-gray-100">
         <Toaster position="top-right" />
         <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} isLoggedIn={isLoggedIn} />
-        
+
         <div className="flex flex-col flex-1 overflow-hidden">
           <Navbar toggleSidebar={toggleSidebar} isLoggedIn={isLoggedIn} handleLogout={handleLogout} />
-          
+
           <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 p-4">
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/directory" element={<Directory />} />
+
               <Route path="/events" element={<Events />} />
+              <Route path="/events/add" element={<AddEvent />} />
+              <Route path="/events/:id" element={<EventDetails />} />
+              <Route path="/events/:id/edit" element={<EditEvent />} />
+
               <Route path="/news" element={<News />} />
               <Route path="/mentorship" element={<Mentorship />} />
               <Route path="/jobs" element={<JobBoard />} />
@@ -70,7 +78,7 @@ function App() {
               <Route path="*" element={<NotFound />} />
             </Routes>
           </main>
-          
+
           <Footer />
         </div>
       </div>

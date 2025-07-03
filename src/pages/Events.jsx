@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
 import { fetchEvents } from '../api';  // Import the fetchEvents function
 import '../styles/Event.css';
+import { Link, useNavigate } from "react-router-dom";
 
 const dummyImage = "https://www.testo.com/images/not-available.jpg";
 
 const Events = () => {
+  const navigate = useNavigate();
   const [events, setEvents] = useState([]);
   const [totalEvents, setTotalEvents] = useState(0);
   const [page, setPage] = useState(1);
@@ -19,7 +21,7 @@ const Events = () => {
   const getEvents = async () => {
     setIsLoading(true);
     setNoResults(false);
-    
+
     const params = {
       page,
       page_size: pageSize,
@@ -75,28 +77,38 @@ const Events = () => {
       <h1 className="event-title">Upcoming Alumni Events</h1>
       <p className="event-subtitle">Stay connected and engaged with our AUCA alumni network.</p>
 
-      {/* Search Box */}
-      <div className="event-search">
-        <input
-          type="text"
-          placeholder="Search for events..."
-          value={search}
-          onChange={handleSearchChange}
-          className="event-search-input"
-        />
-      </div>
 
-      {/* Sorting Options */}
-      <div className="event-sort">
-        <label htmlFor="sort" className="event-sort-label">
-          Sort By:
-        </label>
-        <select id="sort" onChange={handleSortChange} className="event-sort-select">
-          <option value="date_asc">Date (Oldest to Newest)</option>
-          <option value="date_desc">Date (Newest to Oldest)</option>
-          <option value="title_asc">Title (A-Z)</option>
-          <option value="title_desc">Title (Z-A)</option>
-        </select>
+      <div style={{ marginBottom: '20px', display: 'flex', justifyContent: 'space-between' }}>
+        <button
+          className='btn-primary'
+          onClick={() => navigate('/events/add')}
+        >
+          Add New Event
+        </button>
+
+        {/* Search Box */}
+        <div className="event-search">
+          <input
+            type="text"
+            placeholder="Search for events..."
+            value={search}
+            onChange={handleSearchChange}
+            className="event-search-input"
+          />
+        </div>
+
+        {/* Sorting Options */}
+        <div className="event-sort">
+          <label htmlFor="sort" className="event-sort-label">
+            Sort By:
+          </label>
+          <select id="sort" onChange={handleSortChange} className="event-sort-select">
+            <option value="date_asc">Date (Oldest to Newest)</option>
+            <option value="date_desc">Date (Newest to Oldest)</option>
+            <option value="title_asc">Title (A-Z)</option>
+            <option value="title_desc">Title (Z-A)</option>
+          </select>
+        </div>
       </div>
 
       {/* Event List */}
@@ -108,10 +120,10 @@ const Events = () => {
         ) : (
           events.map((event) => (
             <div key={event.id} className="event-card">
-              <img 
-                src={event.photo} 
-                alt={event.title} 
-                className="event-image" 
+              <img
+                src={event.photo}
+                alt={event.title}
+                className="event-image"
                 onError={handleImageError}  // Trigger fallback on error
               />
               <div className="event-details">
@@ -120,15 +132,29 @@ const Events = () => {
                 <p className="event-card-location">{event.location}</p>
                 <p className="event-card-description">{event.description}</p>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '10px' }}>
-                  <a href={event.link} target="_blank" rel="noopener noreferrer" className="event-link">
+                  {/* 2️⃣ VIEW DETAILS */}
+                  <Link
+                    to={`/events/${event.id}`}
+                    className="event-link"
+                  >
                     Learn More
-                  </a>
-                  <a href={event.link} target="_blank" rel="noopener noreferrer" className="event-link">
+                  </Link>
+
+                  {/* 3️⃣ EDIT */}
+                  <Link
+                    to={`/events/${event.id}/edit`}
+                    className="event-link"
+                  >
                     Edit
-                  </a>
-                  <a href={event.link} target="_blank" rel="noopener noreferrer" className="event-link">
+                  </Link>
+
+                  {/* (optional) Delete stays as API call button */}
+                  <button
+                    className="event-link"
+                    onClick={() => console.log("TODO: delete handler")}
+                  >
                     Delete
-                  </a>
+                  </button>
                 </div>
               </div>
             </div>
