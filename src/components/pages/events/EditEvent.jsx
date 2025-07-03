@@ -102,6 +102,7 @@ const EditEvent = () => {
                         name="event_date"
                         value={form.event_date}
                         onChange={handleChange}
+                        min={today}                 /* 🆕  block past days */
                         required
                     />
                 </div>
