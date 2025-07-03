@@ -58,6 +58,22 @@
     font-size: 1rem;
     line-height: 1.5;
   }
+
+  /* Learn More Link */
+  .news-link {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #002f6c;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+  }
+  
+  .news-link:hover {
+    background-color: #004a7c;
+  }
   
   /* Responsive Design */
   @media screen and (max-width: 768px) {
