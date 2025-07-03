@@ -85,7 +85,13 @@ const EditNews = () => {
 
     return (
         <div className="news-form-container">
-            <h2 className="news-form-title">Edit News</h2>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <h2 className="news-form-title">Edit News</h2>
+
+        <button className="back-button" onClick={() => navigate("/news")}>
+          ← Back to News
+        </button>
+            </div>
 
             <form className="news-form" onSubmit={handleSubmit}>
                 {/* TITLE ------------------------------------------------ */}
