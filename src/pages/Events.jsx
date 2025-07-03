@@ -1,73 +1,63 @@
-import { useState, useEffect } from 'react';
-import { fetchEvents } from '../api';  // Import the fetchEvents function
+import React, { useState, useEffect } from 'react';
+import { fetchEvents } from '../api';
+import AddEventModal from '../components/pages/events/AddEventModal';
+import EditEventModal from '../components/pages/events/EditEventModal';
+import ViewEventModal from '../components/pages/events/ViewEventModal';
+import DeleteEventModal from '../components/pages/events/DeleteEventModal';
 import '../styles/Event.css';
 
 const dummyImage = "https://www.testo.com/images/not-available.jpg";
 
-const Events = () => {
+export default function Events() {
   const [events, setEvents] = useState([]);
   const [totalEvents, setTotalEvents] = useState(0);
   const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(5);
+  const [pageSize] = useState(5);
   const [search, setSearch] = useState('');
   const [sortBy, setSortBy] = useState('date');
   const [order, setOrder] = useState('asc');
-  const [isLoading, setIsLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
   const [noResults, setNoResults] = useState(false);
 
-  // Function to fetch events with pagination, search, and sorting
-  const getEvents = async () => {
-    setIsLoading(true);
-    setNoResults(false);
-    
-    const params = {
-      page,
-      page_size: pageSize,
-      search,
-      sort_by: sortBy,
-      order,
-    };
+  const [showAdd, setShowAdd] = useState(false);
+  const [showEdit, setShowEdit] = useState(false);
+  const [showView, setShowView] = useState(false);
+  const [showDelete, setShowDelete] = useState(false);
+  const [selectedEvent, setSelectedEvent] = useState(null);
 
+  const getEvents = async () => {
+    setLoading(true);
+    setNoResults(false);
     try {
-      const data = await fetchEvents(params);
-      if (data.items.length === 0) {
-        setNoResults(true);
-      }
+      const data = await fetchEvents({ page, page_size: pageSize, search, sort_by: sortBy, order });
+      if (!data.items.length) setNoResults(true);
       setEvents(data.items);
       setTotalEvents(data.total);
-    } catch (error) {
-      setNoResults(true);  // Show no results if API call fails
+    } catch {
+      setNoResults(true);
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
-  useEffect(() => {
-    getEvents();  // Fetch events whenever page, search, or other params change
-  }, [page, search, sortBy, order, pageSize]);
+  useEffect(() => { getEvents(); }, [page, search, sortBy, order]);
 
-  // Handle page change
-  const handlePageChange = (newPage) => {
-    setPage(newPage);
+  const handleImageError = e => { e.target.src = dummyImage; };
+
+  const openModal = (modal, event = null) => {
+    setSelectedEvent(event);
+    if (modal === 'add') setShowAdd(true);
+    if (modal === 'edit') setShowEdit(true);
+    if (modal === 'view') setShowView(true);
+    if (modal === 'delete') setShowDelete(true);
   };
-
-  // Handle search input change
-  const handleSearchChange = (e) => {
-    setSearch(e.target.value);
-    setPage(1);  // Reset to first page on search change
-  };
-
-  // Handle sorting change
-  const handleSortChange = (e) => {
-    const [newSortBy, newOrder] = e.target.value.split('_');
-    setSortBy(newSortBy);
-    setOrder(newOrder);
-    setPage(1);  // Reset to first page on sort change
-  };
-
-  // Handle image error (fallback to dummy image)
-  const handleImageError = (e) => {
-    e.target.src = dummyImage;  // Set fallback image if the original image fails
+  const closeAll = () => {
+    setShowAdd(false);
+    setShowEdit(false);
+    setShowView(false);
+    setShowDelete(false);
+    setSelectedEvent(null);
+    getEvents();
   };
 
   return (
@@ -75,83 +65,82 @@ const Events = () => {
       <h1 className="event-title">Upcoming Alumni Events</h1>
       <p className="event-subtitle">Stay connected and engaged with our AUCA alumni network.</p>
 
-      {/* Search Box */}
-      <div className="event-search">
+      <div className="event-toolbar">
+        <button className="btn btn-primary" onClick={() => openModal('add')}>
+          + Add Event
+        </button>
         <input
           type="text"
-          placeholder="Search for events..."
+          placeholder="Search events..."
           value={search}
-          onChange={handleSearchChange}
+          onChange={e => { setSearch(e.target.value); setPage(1); }}
           className="event-search-input"
         />
-      </div>
-
-      {/* Sorting Options */}
-      <div className="event-sort">
-        <label htmlFor="sort" className="event-sort-label">
-          Sort By:
-        </label>
-        <select id="sort" onChange={handleSortChange} className="event-sort-select">
-          <option value="date_asc">Date (Oldest to Newest)</option>
-          <option value="date_desc">Date (Newest to Oldest)</option>
-          <option value="title_asc">Title (A-Z)</option>
-          <option value="title_desc">Title (Z-A)</option>
+        <select
+          onChange={e => {
+            const [newSort, newOrder] = e.target.value.split('_');
+            setSortBy(newSort);
+            setOrder(newOrder);
+            setPage(1);
+          }}
+          className="event-sort-select"
+        >
+          <option value="date_asc">Date ↑</option>
+          <option value="date_desc">Date ↓</option>
+          <option value="title_asc">Title A-Z</option>
+          <option value="title_desc">Title Z-A</option>
         </select>
       </div>
 
-      {/* Event List */}
-      <div className="event-list">
-        {isLoading ? (
-          <p>Loading events...</p>
-        ) : noResults ? (
-          <p>No events found. Please try a different search or check back later.</p>
-        ) : (
-          events.map((event) => (
-            <div key={event.id} className="event-card">
-              <img 
-                src={event.photo} 
-                alt={event.title} 
-                className="event-image" 
-                onError={handleImageError}  // Trigger fallback on error
+      {loading ? (
+        <p>Loading events...</p>
+      ) : noResults ? (
+        <p>No events found.</p>
+      ) : (
+        <div className="event-list">
+          {events.map(ev => (
+            <div key={ev.id} className="event-card">
+              <img
+                src={ev.photo || dummyImage}
+                alt={ev.title}
+                className="event-image"
+                onError={handleImageError}
               />
               <div className="event-details">
-                <h3 className="event-card-title">{event.title}</h3>
-                <p className="event-card-date">{event.date}</p>
-                <p className="event-card-location">{event.location}</p>
-                <p className="event-card-description">{event.description}</p>
-                <a href={event.link} target="_blank" rel="noopener noreferrer" className="event-link">
-                  Learn More
-                </a>
+                <h3>{ev.title}</h3>
+                <p>{ev.date}</p>
+                <div className="event-actions">
+                  <button onClick={() => openModal('view', ev)}>View</button>
+                  <button onClick={() => openModal('edit', ev)}>Edit</button>
+                  <button onClick={() => openModal('delete', ev)}>Delete</button>
+                </div>
               </div>
             </div>
-          ))
-        )}
-      </div>
+          ))}
+        </div>
+      )}
 
-      {/* Pagination */}
       {totalEvents > pageSize && (
         <div className="event-pagination">
+          <button onClick={() => setPage(p => p - 1)} disabled={page === 1}>Prev</button>
+          <span>Page {page} of {Math.ceil(totalEvents / pageSize)}</span>
           <button
-            onClick={() => handlePageChange(page - 1)}
-            disabled={page === 1}
-            className="pagination-button"
-          >
-            Previous
-          </button>
-          <span className="pagination-page">
-            Page {page} of {Math.ceil(totalEvents / pageSize)}
-          </span>
-          <button
-            onClick={() => handlePageChange(page + 1)}
+            onClick={() => setPage(p => p + 1)}
             disabled={page * pageSize >= totalEvents}
-            className="pagination-button"
           >
             Next
           </button>
         </div>
       )}
+
+      <AddEventModal isOpen={showAdd} onClose={closeAll} />
+      {selectedEvent && (
+        <>
+          <EditEventModal isOpen={showEdit} onClose={closeAll} event={selectedEvent} />
+          <ViewEventModal isOpen={showView} onClose={closeAll} event={selectedEvent} />
+          <DeleteEventModal isOpen={showDelete} onClose={closeAll} event={selectedEvent} />
+        </>
+      )}
     </div>
   );
-};
-
-export default Events;
+}
