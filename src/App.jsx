@@ -36,6 +36,9 @@ import EditNews from "./components/pages/news/EditNews";
 import AddProgram from "./components/pages/programs/AddProgram";
 import EditProgram from "./components/pages/programs/EditProgram";
 import ProgramDetails from "./components/pages/programs/ProgramDetails";
+import AddOpportunity from "./components/pages/opportunities/AddOpportunity";
+import OpportunityDetails from "./components/pages/opportunities/OpportunityDetails";
+import EditOpportunity from "./components/pages/opportunities/EditOpportunity";
 
 function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -92,6 +95,10 @@ function App() {
               <Route path="/programs/:id/edit" element={<EditProgram />} />
 
               <Route path="/jobs" element={<JobBoard />} />
+              <Route path="/opportunities/add" element={<AddOpportunity />} />
+              <Route path="/opportunities/:id" element={<OpportunityDetails />} />
+              <Route path="/opportunities/:id/edit" element={<EditOpportunity />} />
+
               <Route path="/forums" element={<Forums />} />
               <Route path="/donate" element={<Donation />} />
               <Route path="/stories" element={<AlumniStories />} />
