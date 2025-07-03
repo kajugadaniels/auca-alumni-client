@@ -8,110 +8,110 @@ import { addEvent, updateEvent } from '../../../api';
 Modal.setAppElement('#root');               // accessibility
 
 const schema = yup.object({
-  date: yup.date().required('Date is required'),
-  description: yup
-    .string()
-    .min(10, 'At least 10 characters')
-    .required('Description is required'),
-  photo: yup.mixed().when('$isEdit', {
-    is: true,
-    then: s => s,             // optional on edit
-    otherwise: s => s.required('Image required'),
-  }),
+    date: yup.date().required('Date is required'),
+    description: yup
+        .string()
+        .min(10, 'At least 10 characters')
+        .required('Description is required'),
+    photo: yup.mixed().when('$isEdit', {
+        is: true,
+        then: s => s,             // optional on edit
+        otherwise: s => s.required('Image required'),
+    }),
 });
 
 export default function EventFormModal({
-  isOpen,
-  onClose,
-  initial,
-  onSuccess,
+    isOpen,
+    onClose,
+    initial,
+    onSuccess,
 }) {
-  const isEdit = Boolean(initial?.id);
+    const isEdit = Boolean(initial?.id);
 
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors, isSubmitting },
-  } = useForm({
-    defaultValues: {
-      date: '',
-      description: '',
-      photo: null,
-      ...initial,
-    },
-    context: { isEdit },
-    resolver: yupResolver(schema),
-  });
-
-  useEffect(() => {
-    reset({
-      date: initial?.date || '',
-      description: initial?.description || '',
-      photo: null,
+    const {
+        register,
+        handleSubmit,
+        reset,
+        formState: { errors, isSubmitting },
+    } = useForm({
+        defaultValues: {
+            date: '',
+            description: '',
+            photo: null,
+            ...initial,
+        },
+        context: { isEdit },
+        resolver: yupResolver(schema),
     });
-  }, [initial, reset]);
 
-  const onSubmit = async data => {
-    try {
-      if (isEdit) {
-        await updateEvent(initial.id, {
-          event_date: data.date,
-          description: data.description,
-          photo: data.photo?.[0],
+    useEffect(() => {
+        reset({
+            date: initial?.date || '',
+            description: initial?.description || '',
+            photo: null,
         });
-      } else {
-        await addEvent({
-          event_date: data.date,
-          description: data.description,
-          photo: data.photo[0],
-        });
-      }
-      onSuccess();
-      onClose();
-    } catch (e) {
-      alert(e.message || 'Request failed.');
-    }
-  };
+    }, [initial, reset]);
 
-  return (
-    <Modal
-      isOpen={isOpen}
-      onRequestClose={onClose}
-      className="modal-card"
-      overlayClassName="modal-overlay"
-    >
-      <h2>{isEdit ? 'Edit Event' : 'Add New Event'}</h2>
-      <form onSubmit={handleSubmit(onSubmit)} className="modal-form">
-        <label>Date</label>
-        <input type="date" {...register('date')} />
-        {errors.date && <small className="error">{errors.date.message}</small>}
+    const onSubmit = async data => {
+        try {
+            if (isEdit) {
+                await updateEvent(initial.id, {
+                    event_date: data.date,
+                    description: data.description,
+                    photo: data.photo?.[0],
+                });
+            } else {
+                await addEvent({
+                    event_date: data.date,
+                    description: data.description,
+                    photo: data.photo[0],
+                });
+            }
+            onSuccess();
+            onClose();
+        } catch (e) {
+            alert(e.message || 'Request failed.');
+        }
+    };
 
-        <label>Description</label>
-        <textarea rows={4} {...register('description')} />
-        {errors.description && (
-          <small className="error">{errors.description.message}</small>
-        )}
+    return (
+        <Modal
+            isOpen={isOpen}
+            onRequestClose={onClose}
+            className="modal-card"
+            overlayClassName="modal-overlay"
+        >
+            <h2>{isEdit ? 'Edit Event' : 'Add New Event'}</h2>
+            <form onSubmit={handleSubmit(onSubmit)} className="modal-form">
+                <label>Date</label>
+                <input type="date" {...register('date')} />
+                {errors.date && <small className="error">{errors.date.message}</small>}
 
-        <label>Photo {isEdit && '(leave blank to keep existing)'}</label>
-        <input type="file" accept="image/*" {...register('photo')} />
-        {errors.photo && (
-          <small className="error">{errors.photo.message}</small>
-        )}
+                <label>Description</label>
+                <textarea rows={4} {...register('description')} />
+                {errors.description && (
+                    <small className="error">{errors.description.message}</small>
+                )}
 
-        <div className="modal-actions">
-          <button type="button" onClick={onClose} className="btn-secondary">
-            Cancel
-          </button>
-          <button
-            type="submit"
-            className="btn-primary"
-            disabled={isSubmitting}
-          >
-            {isSubmitting ? 'Saving…' : 'Save'}
-          </button>
-        </div>
-      </form>
-    </Modal>
-  );
+                <label>Photo {isEdit && '(leave blank to keep existing)'}</label>
+                <input type="file" accept="image/*" {...register('photo')} />
+                {errors.photo && (
+                    <small className="error">{errors.photo.message}</small>
+                )}
+
+                <div className="modal-actions">
+                    <button type="button" onClick={onClose} className="btn-secondary">
+                        Cancel
+                    </button>
+                    <button
+                        type="submit"
+                        className="btn-primary"
+                        disabled={isSubmitting}
+                    >
+                        {isSubmitting ? 'Saving…' : 'Save'}
+                    </button>
+                </div>
+            </form>
+        </Modal>
+    );
 }
