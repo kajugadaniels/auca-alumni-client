@@ -1,0 +1,128 @@
+/* src/styles/NewsForm.css */
+/* --------------------------------------------------------------
+   01. VARIABLES
+----------------------------------------------------------------*/
+:root {
+  --clr-bg: #ffffff;
+  --clr-surface: #f6f8fa;
+  --clr-border: #d0d7de;
+  --clr-primary: #0057b7;      /* AUCA blue */
+  --clr-primary-dark: #00449a;
+  --clr-text: #24292f;
+  --radius: 6px;
+  --shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+/* Dark mode (optional) */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --clr-bg: #0d1117;
+    --clr-surface: #161b22;
+    --clr-border: #30363d;
+    --clr-primary: #3794ff;
+    --clr-primary-dark: #2f81f7;
+    --clr-text: #c9d1d9;
+    --shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+  }
+}
+
+/* --------------------------------------------------------------
+   02. LAYOUT CONTAINER
+----------------------------------------------------------------*/
+.news-form-container {
+  max-width: 640px;
+  margin: 48px auto;
+  padding: 32px 28px;
+  background: var(--clr-bg);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+/* --------------------------------------------------------------
+   03. HEADINGS
+----------------------------------------------------------------*/
+.news-form-title {
+  margin-bottom: 28px;
+  font-size: 1.5rem;
+  font-weight: 700;
+  text-align: center;
+  color: var(--clr-text);
+}
+
+/* --------------------------------------------------------------
+   04. FORM FIELDS
+----------------------------------------------------------------*/
+.news-form-field {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 22px;
+}
+
+.news-form-field label {
+  margin-bottom: 6px;
+  font-weight: 600;
+  color: var(--clr-text);
+}
+
+.news-form-field input,
+.news-form-field textarea {
+  padding: 10px 12px;
+  font-size: 0.95rem;
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius);
+  background: var(--clr-surface);
+  color: var(--clr-text);
+  transition: border 0.15s ease;
+}
+
+.news-form-field input:focus,
+.news-form-field textarea:focus {
+  border-color: var(--clr-primary);
+  outline: none;
+}
+
+/* Textarea tweak */
+.news-form-field textarea {
+  resize: vertical;
+  min-height: 120px;
+  line-height: 1.5;
+}
+
+/* --------------------------------------------------------------
+   05. BUTTONS
+----------------------------------------------------------------*/
+.btn-primary {
+  width: 100%;
+  padding: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #fff;
+  background: var(--clr-primary);
+  border: none;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: var(--clr-primary-dark);
+}
+
+.btn-primary:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+/* --------------------------------------------------------------
+   06. RESPONSIVE BREAKPOINTS
+----------------------------------------------------------------*/
+@media (max-width: 480px) {
+  .news-form-container {
+    padding: 24px 18px;
+  }
+
+  .news-form-title {
+    font-size: 1.35rem;
+  }
+}
